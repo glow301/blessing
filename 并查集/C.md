@@ -12,19 +12,19 @@ The first line of the input contains an integer n (0 ≤ n ≤ 100 000) - the nu
 The output in one line contains exactly one integer equals to the maximum number of boys Mr Wang may keep. 
 
 ### Simple Input
-4
-1 2
-3 4
-5 6
-1 6
-4
-1 2
-3 4
-5 6
-7 8
+4  
+1 2  
+3 4  
+5 6  
+1 6  
+4  
+1 2  
+3 4  
+5 6  
+7 8  
 
 ### Simple Output
-4
+4  
 2
 
 ### 问题分析
