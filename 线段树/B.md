@@ -1,0 +1,141 @@
+## 敌兵布阵 
+
+### Descrption
+Lily特别喜欢养花，但是由于她的花特别多，所以照料这些花就变得不太容易。她把她的花依次排成一行，每盆花都有一个美观值。如果Lily把某盆花照料的好的话，这盆花的美观值就会上升，如果照料的不好的话，这盆花的美观值就会下降。有时，Lily想知道某段连续的花的美观值之和是多少，但是，Lily的算术不是很好，你能快速地告诉她结果吗?
+
+### Input
+第一行一个整数T，表示有T组测试数据。
+每组测试数据的第一行为一个正整数N (N<=50000)，表示Lily有N盆花。
+接下来有N个正整数，第i个正整数ai (1<=ai<=50) 表示第i盆花的初始美观值。
+接下来每行有一条命令，命令有4种形式：
+（1）Add i j, i和j为正整数，表示第i盆花被照料的好，美观值增加j (j<=30)
+（2）Sub i j, i和j为正整数，表示第i盆花被照料的不好，美观值减少j (j<=30)
+（3）Query i j, i和j为正整数，i<=j，表示询问第i盆花到第j盆花的美观值之和
+（4）End，表示结束，这条命令在每组数据最后出现
+每组数据的命令不超过40000条
+
+### Output
+对于第i组数据，首先输出"Case i:"和回车。
+对于每个"Query i j"命令，输出第i盆花到第j盆花的美观值之和。
+
+### Sample Input
+1  
+9  
+7 9 8 4 4 5 4 2 7  
+Query 7 9  
+Add 4 9  
+Query 3 6  
+Sub 9 6  
+Sub 3 3  
+Query 1 9  
+End   
+
+### Sample Output
+Case 1:  
+13  
+30  
+50   
+
+### 问题分析
+
+### Code
+```java
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+
+public class B {
+    private static final int MAX = 50000;
+    private static int[] sum     = new int[MAX<<2];
+    private static int[] input   = new int[MAX];
+
+    private static void pushUp(int root) {
+        sum[root] = sum[root*2+1] + sum[root*2+2];
+    }
+
+    private static void build(int left, int right, int root) {
+        if (left == right) {
+            sum[root] = input[left];
+            return;
+        }
+        int mid = (left + right) >> 1;
+        build(left, mid, root*2+1);
+        build(mid+1, right, root*2+2);
+        pushUp(root);
+    }
+
+    private static void update(int l, int c, int left, int right, int root) {
+        if (left == right) {
+            sum[root] += c;
+            return;
+        }
+        int mid = (left + right) >> 1;
+        if (l <= mid) {
+            update(l, c, left, mid, root*2+1);
+        } else {
+            update(l, c, mid+1, right, root*2+2);
+        }
+        pushUp(root);
+    }
+
+    public static int query(int start, int end, int left, int right, int root) {
+        if (start <= left && end >= right) {
+            return sum[root];
+        }
+        int mid   = (left + right) >> 1;
+        int count = 0;
+        if (start <= mid) {
+            count += query(start, end, left, mid, root*2+1);
+        }
+        if (end > mid) {
+            count += query(start, end, mid+1, right, root*2+2);
+        }
+        return count;
+    }
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+
+        String lines;
+        while ((lines = in.readLine()) != null) {
+            int cases = Integer.parseInt(lines);
+            int index = 1;
+            while (cases-- > 0) {
+                System.out.println("Case " + index + ":");
+                int count       = Integer.parseInt(in.readLine());
+                String numbers  = in.readLine();
+                String[] number = numbers.split("\\s");
+                int i = 0;
+                for (String item : number) {
+                    input[i] = Integer.parseInt(item);
+                    i++;
+                }
+                build(0, count-1, 0);
+
+                while (true) {
+                    String line = in.readLine();
+                    String[] op = line.split("\\s");
+
+                    if (op[0].equals("End")) {
+                        break;
+                    }
+                    int op1 = Integer.parseInt(op[1]);
+                    int op2 = Integer.parseInt(op[2]);
+                    switch (op[0]) {
+                        case "Query":
+                            System.out.println(query(op1-1, op2-1, 0, i-1, 0));
+                            break;
+                        case "Add":
+                            update(op1-1, op2, 0, i-1, 0);
+                            break;
+                        case "Sub":
+                            update(op1-1, -op2, 0, i-1, 0);
+                            break;
+                    }
+                }
+                index++;
+            }
+        }
+    }
+}
+```
