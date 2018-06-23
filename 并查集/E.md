@@ -44,16 +44,14 @@ Case 2: 7
 import java.util.Scanner;
 
 public class Main {
-
-    private static int size = 0;
+    private static int size;
     private static int[] p;
     private static int[] rank;
-    private static int count = 0;
 
-    private static void init(int len) {
-        p    = new int[len];
-        rank = new int[len];
-        for (int i = 0; i < len; i++) {
+    private static void init() {
+        p    = new int[size];
+        rank = new int[size];
+        for (int i = 0; i < size; i++) {
             p[i]    = i;
             rank[i] = 1;
         }
@@ -70,8 +68,7 @@ public class Main {
         x = find(x);
         y = find(y);
         if (x != y) {
-            // 每次合并，宿舍数量减 1
-            count--;
+            size--;
             if (rank[x] >= rank[y]) {
                 p[y]    = x;
                 rank[x] += rank[y];
@@ -86,20 +83,20 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
-        int counter  = 1;
-        while (scan.hasNextInt()) {
-            size      = scan.nextInt();
-            count     = size;
-            int line  = scan.nextInt();
+
+        int idx  = 1;
+        while (scan.hasNext()) {
+            size     = scan.nextInt();
+            int line = scan.nextInt();
             if (0 == size && 0 == line) {
                 break;
             }
-            init(size);
-            while(line-- > 0) {
-                union(scan.nextInt() - 1, scan.nextInt() - 1);
+            init();
+            while (line-- > 0) {
+               union(scan.nextInt()-1, scan.nextInt()-1);
             }
-            System.out.println("Case " + counter + ": " + count);
-            counter++;
+            System.out.println("Case " + idx + ": "  + size);
+            idx++;
         }
     }
 }

@@ -38,65 +38,56 @@ The output in one line contains exactly one integer equals to the maximum number
 import java.util.Scanner;
 
 public class Main {
-
     private static final int LEN = 100000;
     private static int[] p       = new int[LEN];
     private static int[] rank    = new int[LEN];
-    private static int maxSize   = 0;
+    private static int size;
+    private static int max;
 
-    public static void init() {
+
+    private static void init(){
         for (int i = 0; i < LEN; i++) {
             p[i]    = i;
             rank[i] = 1;
         }
     }
 
-    public static int find(int x) {
+    private static int find(int x) {
         if (x != p[x]) {
             p[x] = find(p[x]);
         }
         return p[x];
     }
 
-    public static void union(int x, int y) {
+    private static void union(int x, int y) {
         x = find(x);
         y = find(y);
         if (x != y) {
             if (rank[x] >= rank[y]) {
-                p[y] = x;
+                p[y]    = x;
                 rank[x] += rank[y];
+                rank[y] = 0;
+                max     = rank[x] > max ? rank[x] : max;
             } else {
-                p[x] = y;
+                p[x]    = y;
                 rank[y] += rank[x];
+                rank[x] = 0;
+                max     = rank[y] > max ? rank[y] : max;
             }
         }
-    }
-
-    public static int findMax(int[] arr) {
-        int max = 1;
-        for (int i = 0; i < maxSize; i++) {
-            if (arr[i] > max) {
-                max = arr[i];
-            }
-        }
-        return max;
     }
 
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
 
-        while (scan.hasNextInt()) {
-            int cases = scan.nextInt();
-            maxSize   = cases;
+        while (scan.hasNext()) {
+            size    = scan.nextInt();
+            max     = 1;
             init();
-            while (cases-- > 0) {
-                int x = scan.nextInt();
-                int y = scan.nextInt();
-                maxSize = x > maxSize ? x : maxSize;
-                maxSize = y > maxSize ? y : maxSize;
-                union(x - 1, y - 1);
+            for (int i = 0; i < size; i++) {
+                union(scan.nextInt()-1, scan.nextInt()-1);
             }
-            System.out.println(findMax(rank));
+            System.out.println(max);
         }
     }
 }

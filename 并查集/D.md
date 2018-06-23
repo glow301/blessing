@@ -37,14 +37,15 @@ n = 0且m = 0时输入结束。
 ```java
 import java.util.Scanner;
 
-public class Main {
+public class Main{
+    private static int size;
+    private static int[] p;
+    private static int[] rank;
 
-    private static final int LEN = 30000;
-    private static int[] p       = new int[LEN];
-    private static int[] rank    = new int[LEN];
-
-    private static void init(int size) {
-        for (int i = 0; i < size ; i++) {
+    private static void init() {
+        p    = new int[size];
+        rank = new int[size];
+        for (int i = 0; i < size; i++) {
             p[i]    = i;
             rank[i] = 1;
         }
@@ -57,20 +58,18 @@ public class Main {
         return p[x];
     }
 
-    private static void unionArr(int[] arr) {
-        int base = arr[0];
-        for (int i = 1; i < arr.length; i++) {
-            int x = find(base);
-            int y = find(arr[i]);
-
-            if (x != y) {
-                if (rank[x] >= rank[y]) {
-                    p[y] = x;
-                    rank[x] += rank[y];
-                } else {
-                    p[x] = y;
-                    rank[y] += rank[x];
-                }
+    private static void union(int x, int y) {
+        x = find(x);
+        y = find(y);
+        if (x != y) {
+            if (rank[x] >= rank[y]) {
+                p[y]    = x;
+                rank[x] += rank[y];
+                rank[y] = 0;
+            } else {
+                p[x]    = y;
+                rank[y] += rank[x];
+                rank[x] = 0;
             }
         }
     }
@@ -78,20 +77,19 @@ public class Main {
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
 
-        while (scan.hasNextInt()) {
-            int number = scan.nextInt();
-            int groups = scan.nextInt();
-            if (0 == number && 0 == groups) {
+        while (scan.hasNext()) {
+            size      = scan.nextInt();
+            int line  = scan.nextInt();
+            if (0 == size && 0 == line) {
                 break;
             }
-            init(number);
-            while (groups-- > 0) {
+            init();
+            while (line-- > 0) {
                 int count = scan.nextInt();
-                int[] row = new int[count];
-                while (count-- > 0) {
-                    row[count] = scan.nextInt();
+                int first = scan.nextInt();
+                for (int i = 1; i < count; i++) {
+                    union(first, scan.nextInt());
                 }
-                unionArr(row);
             }
             System.out.println(rank[find(0)]);
         }
