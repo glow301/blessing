@@ -5,12 +5,12 @@
 可以参考一下这篇文章 [链接](https://blog.csdn.net/zearot/article/details/52280189)
 * java 中有时候会报 time limt 的错误，这种情况，如果确认是代码没有问题的话，需要把 `scan.next()` 这种改成 `BufferedReader`
 
-### 操作
+### 操作
 * 建树（build）
 * 更新（update）
 * 查询（query）
 
-### 问题分类
+### 问题分类
 * [单点更新](#单点更新)
 * 区间更新
 * 区间合并
