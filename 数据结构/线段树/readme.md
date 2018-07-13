@@ -5,12 +5,20 @@
 可以参考一下这篇文章 [链接](https://blog.csdn.net/zearot/article/details/52280189)
 * java 中有时候会报 time limt 的错误，这种情况，如果确认是代码没有问题的话，需要把 `scan.next()` 这种改成 `BufferedReader`
 
-### 操作
+### 操作
 * 建树（build）
 * 更新（update）
 * 查询（query）
 
-#### 递归实现
+### 问题分类
+* [单点更新](#单点更新)
+* 区间更新
+* 区间合并
+* 扫描线
+
+#### 单点更新
+> 单点更新是线段树中最基本的操作，每次更新只会更新一个点的数据。
+
 ##### 建树
 > 线段树涉及两个数组，一个是保存节点信息的数组，另一个是原始输入数组。
 * 这里以求和为例。
@@ -70,3 +78,5 @@ public static int query(int start, int end, int left, int right, int root) {
     return count;
 }
 ```
+
+### 区间合并
