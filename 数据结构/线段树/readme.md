@@ -79,4 +79,6 @@ public static int query(int start, int end, int left, int right, int root) {
 }
 ```
 
+### 区间更新
 ### 区间合并
+### 扫描线

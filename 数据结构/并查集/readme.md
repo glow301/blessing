@@ -10,7 +10,7 @@
 
 ### 初始化
 ```java
- public static int[] init(int num) {
+public static int[] init(int num) {
     int[] p = new int[num];
     for (int i = 0; i < num; i++) {
         p[i] = i;
