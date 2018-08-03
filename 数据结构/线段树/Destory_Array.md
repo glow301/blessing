@@ -17,6 +17,7 @@ Input
 4  
 1 3 2 5  
 3 4 1 2 
+
 Output  
 5  
 4  
@@ -27,6 +28,7 @@ Input
 5  
 1 2 3 4 5  
 4 2 3 5 1  
+
 Output  
 6  
 5  
@@ -38,6 +40,7 @@ Input
 8  
 5 5 4 4 6 6 5 5  
 5 2 8 7 1 3 4 6  
+
 Output  
 18  
 16  
@@ -52,7 +55,7 @@ Output
 这个题属于线段树**区间合并**的问题，问题的关键就在于 pushUp 这个函数
 与单点更新问题区别在于
 1. 每一个节点需要保存 4 个信息
-    1. 区间左起最大连续和（简称左和）。
+    1. 区间左起最大连续和（简称左和）。
     1. 区间右起最大连续和（简称右和）。
     1. 当前区间最大连续和（**左和**，**右和**，**左子树右和+右子树左和**，这三个值的最大值）。
     1. 当前区间是否为满（区间不包含 0 视为满）。
@@ -81,7 +84,9 @@ struct {
 } tree[MAX<<2];
 
 void pushUp(int root) {
+    // 默认为左子树的左和
     tree[root].lSum = tree[root*2+1].lSum;
+    // 左子树满，左和需要向右延伸
     if (tree[root*2+1].full) {
         tree[root].lSum += tree[root*2+2].lSum;
     }
@@ -91,13 +96,16 @@ void pushUp(int root) {
         tree[root].rSum += tree[root*2+1].rSum;
     }
     
+    // 左子树 和 右子树，任意一个不满，当前节点不满
     if (tree[root*2+1].full == false || tree[root*2+2].full == false) {
         tree[root].full = false;
     }
+    // 区间最大和，为 左子树最大和，右子树最大和，左子树右和+右子树左和，三者最大值
     tree[root].sum = max(max(tree[root*2+1].sum, tree[root*2+2].sum), tree[root*2+1].rSum + tree[root*2+2].lSum);
 }
 
 void build(int left, int right, int root) {
+    // 初始化默认所有节点都满
     tree[root].full = true;
     if (left == right) {
         tree[root].sum = tree[root].lSum = tree[root].rSum = input[left];
@@ -112,6 +120,7 @@ void build(int left, int right, int root) {
 void update(int l, int c, int left, int right, int root) {
     if (left == right) {
         tree[root].sum = tree[root].lSum = tree[root].rSum = c;
+        // 由于此题更新数据都为 0，更新当前节点不满
         tree[root].full = false;
         return;
     }
