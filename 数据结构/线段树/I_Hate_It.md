@@ -118,3 +118,80 @@ public class Main {
     }
 }
 ```
+
+### c++ 版
+```cpp
+#include<cstdio>
+#include<algorithm>
+
+using namespace std;
+
+const int MAX = 2E5+10;
+int input[MAX];
+int tree[MAX<<2] = {0};
+
+void pushUp(int root) {
+    tree[root] = max(tree[root*2+1], tree[root*2+2]);
+}
+
+void build(int left, int right, int root) {
+    if (left == right) {
+        tree[root] = input[left];
+        return;
+    }
+    int mid = (left + right) >> 1;
+    build(left, mid, root*2+1);
+    build(mid+1, right, root*2+2);
+    pushUp(root);
+}
+
+void update(int l, int c, int left, int right, int root) {
+    if (left == right) {
+        tree[root] = c;
+        return;
+    }
+    int mid = (left + right) >> 1;
+    if (l <= mid) {
+        update(l, c, left, mid, root*2+1);
+    } else {
+        update(l, c, mid+1, right, root*2+2);
+    }
+    pushUp(root);
+}
+
+int query (int start, int end, int left, int right, int root) {
+    if (start <= left && end >= right) {
+        return tree[root];
+    }
+    int mid = (left + right) >> 1;
+    int l = 0, r = 0;
+    if (start <= mid) {
+        l = query(start, end, left, mid, root*2+1);
+    }
+    if (end > mid) {
+        r = query(start, end, mid+1, right, root*2+2);
+    }
+    return max(l, r);
+}
+
+int main() {
+    int size, line, op1, op2 = 0;
+    char action[2];
+    while (scanf("%d", &size) != EOF) {
+        scanf("%d", &line);
+        for (int i = 0; i < size; i++) {
+            scanf("%d", &input[i]);
+        }
+        build(0, size-1, 0);
+
+        while (line--) {
+            scanf("%s %d %d", action, &op1, &op2);
+            if ('Q' == action[0]) {
+                printf("%d\n", query(op1-1, op2-1, 0, size-1, 0));
+            } else if ('U' == action[0]) {
+                update(op1-1, op2, 0, size-1, 0);
+            }
+        }
+    }
+}
+```
