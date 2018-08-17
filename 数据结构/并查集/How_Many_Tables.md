@@ -86,3 +86,63 @@ public class Main {
     }
 }
 ```
+
+#### C++ 版代码
+```cpp
+#include<cstdio>
+#include<algorithm>
+
+using namespace std;
+
+const int MAX = 1000;
+int p[MAX];
+int r[MAX];
+int sum = 0;
+
+void init() {
+    for (int i = 0; i < MAX; i++) {
+        p[i] = i;
+        r[i] = 1;
+    }
+}
+
+int find(int x) {
+    if (x != p[x]) {
+        p[x] = find(p[x]);
+    }
+    return p[x];
+}
+
+void unionSet(int x, int y) {
+    x = find(x);
+    y = find(y);
+    if (x != y) {
+        if (r[x] >= r[y]) {
+            p[y] = x;
+            r[x] += r[y];
+        } else {
+            p[x] = y;
+            r[y] += r[x];
+        }
+        sum--;
+    }
+}
+
+int main() {
+    int size;
+    scanf("%d", &size);
+    while (size--) {
+        int line;
+        scanf("%d %d", &sum, &line);
+        init();
+        while (line--) {
+            int x, y;
+            scanf("%d %d", &x, &y);
+            unionSet(x-1, y-1);
+        }
+        printf("%d\n", sum);
+    }
+    return 0;
+}
+
+```
