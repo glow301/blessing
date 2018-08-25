@@ -12,8 +12,8 @@ People kept jumping the queue. Since it was too dark around, such moves would no
 ### Input
 There will be several test cases in the input. Each test case consists of N + 1 lines where N (1 ≤ N ≤ 200,000) is given in the first line of the test case. The next N lines contain the pairs of values Posi and Vali in the increasing order of i (1 ≤ i ≤ N). For each i, the ranges and meanings of Posi and Vali are as follows:
 
-Posi ∈ [0, i − 1] — The i-th person came to the queue and stood right behind the Posi-th person in the queue. The booking office was considered the 0th person and the person at the front of the queue was considered the first person in the queue.
-Vali ∈ [0, 32767] — The i-th person was assigned the value Vali.
+* Posi ∈ [0, i − 1] — The i-th person came to the queue and stood right behind the Posi-th person in the queue. The booking office was considered the 0th person and the person at the front of the queue was considered the first person in the queue.
+* Vali ∈ [0, 32767] — The i-th person was assigned the value Vali.
 There no blank lines between test cases. Proceed to the end of input.
 
 ### Output
