@@ -23,11 +23,11 @@ Given this data, tell FJ the exact ordering of the cows.
 0  
 
 ### Sample Output
-5  
-1  
 2  
+4  
+5  
+3  
 1  
-0  
 
 ### 问题分析
 

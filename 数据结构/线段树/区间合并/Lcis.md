@@ -56,88 +56,93 @@ Q 0 9
     * 当左子树右端点小于右子树左端点的时候，需要做一下判断
     * **左/右起最长连续和**，要在区间**长度和左/右起连续和**之间取**最小值**，原因是，连续的长度可能会超过区间的查找长度。
 
+### Tips
+* pushUp 操作时，更新的一定是当前节点(root)的数据，而不是**左右子树**的数据。
+* update 和 query 时，比较的对象，永远都是 mid.
+* 动手之前，想一想，线段树维护的节点信息是什么。
+* query 
+
 ### code
 ```cpp
 #include<cstdio>
+#include<cstring>
 #include<algorithm>
+
+#define lson root*2+1
+#define rson root*2+2
 
 using namespace std;
 
-const int MAX = 100000;
-
-struct{
-    int lsum, rsum, sum, l, r;
+const int MAX = 1e5;
+int input[MAX];
+struct {
+    int llcis, rlcis, lcis, left, right;
 } tree[MAX<<2];
 
-int input[MAX];
-
 void pushUp(int root, int left, int right) {
-    tree[root].l = tree[root*2+1].l;
-    tree[root].r = tree[root*2+2].r;
-    tree[root].lsum = tree[root*2+1].lsum;
-    tree[root].rsum = tree[root*2+2].rsum;
+    tree[root].llcis = tree[lson].llcis;
+    tree[root].rlcis = tree[rson].rlcis;
+    tree[root].left  = tree[lson].left;
+    tree[root].right = tree[rson].right;
 
-    tree[root].sum = max(tree[root*2+1].sum, tree[root*2+2].sum);
+    tree[root].lcis = max(tree[lson].lcis, tree[rson].lcis);
 
     int mid = (left + right) >> 1;
-    // 左子树右端点 小于 右子树左端点
-    if (tree[root*2+1].r < tree[root*2+2].l) {
-        // 区间长度 等于 连续长度，延伸左连续长度至右边
-        if (mid - left + 1 == tree[root*2+1].sum) {
-            tree[root].lsum += tree[root*2+2].lsum;
+    if (tree[lson].right < tree[rson].left) {
+        if (mid - left + 1 == tree[root].llcis) {
+            tree[root].llcis += tree[rson].llcis;
         }
-        // 区间长度 等于 连续长度，连续右连续和到左边
-        if (right - mid == tree[root*2+2].sum) {
-            tree[root].rsum += tree[root*2+1].rsum;
+        if (right - mid == tree[root].rlcis) {
+            tree[root].rlcis += tree[lson].rlcis;
         }
-        tree[root].sum = max(tree[root].sum, tree[root*2+1].rsum + tree[root*2+2].lsum);
+        tree[root].lcis = max(tree[root].lcis, tree[lson].rlcis + tree[rson].llcis);
     }
 }
 
 void build(int left, int right, int root) {
     if (left == right) {
-        tree[root].lsum = tree[root].rsum = tree[root].sum = 1;
-        tree[root].l = tree[root].r = input[left];
+        tree[root].llcis = tree[root].rlcis = tree[root].lcis = 1;
+        tree[root].left = tree[root].right = input[left];
         return;
     }
     int mid = (left + right) >> 1;
-    build(left, mid, root*2+1);
-    build(mid+1, right, root*2+2);
-    pushUp(root, left ,right);
+    build(left, mid, lson);
+    build(mid+1, right, rson);
+    pushUp(root, left, right);
 }
 
 void update(int l, int c, int left, int right, int root) {
     if (left == right) {
-        tree[root].l = tree[root].r = c;
+        tree[root].left =  tree[root].right = c;
         return;
     }
     int mid = (left + right) >> 1;
     if (l <= mid) {
-        update(l, c, left, mid, root*2+1);
+        update(l, c, left, mid, lson);
     } else {
-        update(l, c, mid+1, right, root*2+2);
+        update(l, c, mid+1, right, rson);
     }
     pushUp(root, left, right);
 }
 
 int query(int start, int end, int left, int right, int root) {
     if (start <= left && end >= right) {
-        return tree[root].sum;
+        return tree[root].lcis;
     }
     int mid = (left + right) >> 1;
     int l = 0, r = 0;
+    int ans = 0;
     if (start <= mid) {
-        l = query(start, end, left, mid, root*2+1);
+        l = query(start, end, left, mid, lson);
     }
     if (end > mid) {
-        r = query(start, end, mid+1, right, root*2+2);
+        r = query(start, end, mid+1, right, rson);
     }
-    int ans = max(l, r);
-    if (tree[root*2+1].r < tree[root*2+2].l) {
-        // 连续和要在，区间长度，和连续和之间取最小值，防止连续长度超过区间查找长度
-        int llcis = min(mid-start+1, tree[root*2+1].rsum);
-        int rlcis = min(end-mid, tree[root*2+2].lsum);
-        return max(llcis + rlcis, ans);
+    ans = max(l, r);
+    if (tree[lson].right < tree[rson].left) {
+        int llcis = min(tree[lson].rlcis, mid - start + 1);
+        int rlcis = min(tree[rson].llcis, end - mid);
+        ans = max(ans, llcis + rlcis);
     }
     return ans;
 }
@@ -146,22 +151,21 @@ int main() {
     int line = 0;
     scanf("%d", &line);
     while (line--) {
-        int size, ops;
-        scanf("%d %d", &size, &ops);
+        int size, row;
+        scanf("%d %d", &size, &row);
         for (int i = 0; i < size; i++) {
             scanf("%d", &input[i]);
         }
-        build(0, size, 0);
+        build(0, size-1, 0);
 
-        char op[3];
-        int op1, op2;
-        for (int i = 0; i < ops; i++) {
-            scanf("%s %d %d", op, &op1, &op2);
-            if('Q' == op[0]) {
-                printf("%d\n", query(op1, op2, 0, size, 0));
-            }
-            if ('U' == op[0]) {
-                update(op1, op2, 0 ,size, 0);
+        while (row--) {
+            char action[2];
+            int num1, num2;
+            scanf("%s %d %d", action, &num1, &num2);
+            if (0 == strcmp(action, "Q")) {
+                printf("%d\n", query(num1, num2, 0, size-1, 0));
+            } else if (0 == strcmp(action, "U")) {
+                update(num1, num2, 0, size-1, 0);
             }
         }
     }
