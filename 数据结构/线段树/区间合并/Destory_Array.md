@@ -71,76 +71,73 @@ Output
 ### Code
 ```cpp
 #include<cstdio>
-#include <algorithm>
+#include<algorithm>
+
+#define lson root*2+1
+#define rson root*2+2
 
 using namespace std;
 
-const int MAX = 1E5+10;
-int input[MAX];
-
+const int MAX = 1e5;
+long long input[MAX];
 struct {
-    long long sum, lSum, rSum;
+    long long sum, lsum, rsum;
     bool full;
 } tree[MAX<<2];
 
 void pushUp(int root) {
-    // 默认为左子树的左和
-    tree[root].lSum = tree[root*2+1].lSum;
-    // 左子树满，左和需要向右延伸
-    if (tree[root*2+1].full) {
-        tree[root].lSum += tree[root*2+2].lSum;
-    }
+    tree[root].lsum = tree[lson].lsum;
+    tree[root].rsum = tree[rson].rsum;
+    tree[root].sum  = max(tree[lson].sum, tree[rson].sum);
 
-    tree[root].rSum = tree[root*2+2].rSum;
-    if (tree[root*2+2].full) {
-        tree[root].rSum += tree[root*2+1].rSum;
+    if (tree[lson].full) {
+        tree[root].lsum += tree[rson].lsum;
     }
-    
-    // 左子树 和 右子树，任意一个不满，当前节点不满
-    if (tree[root*2+1].full == false || tree[root*2+2].full == false) {
+    if (tree[rson].full) {
+        tree[root].rsum += tree[lson].rsum;
+    }
+    if (!tree[lson].full || !tree[rson].full) {
         tree[root].full = false;
     }
-    // 区间最大和，为 左子树最大和，右子树最大和，左子树右和+右子树左和，三者最大值
-    tree[root].sum = max(max(tree[root*2+1].sum, tree[root*2+2].sum), tree[root*2+1].rSum + tree[root*2+2].lSum);
+    tree[root].sum = max(tree[root].sum, tree[lson].rsum + tree[rson].lsum);
 }
 
 void build(int left, int right, int root) {
-    // 初始化默认所有节点都满
     tree[root].full = true;
     if (left == right) {
-        tree[root].sum = tree[root].lSum = tree[root].rSum = input[left];
+        tree[root].sum = tree[root].lsum = tree[root].rsum = input[left];
         return;
     }
     int mid = (left + right) >> 1;
-    build(left, mid, root*2+1);
-    build(mid+1, right, root*2+2);
+    build(left, mid, lson);
+    build(mid+1, right, rson);
     pushUp(root);
 }
 
 void update(int l, int c, int left, int right, int root) {
     if (left == right) {
-        tree[root].sum = tree[root].lSum = tree[root].rSum = c;
-        // 由于此题更新数据都为 0，更新当前节点不满
+        tree[root].sum = tree[root].lsum = tree[root].rsum = 0;
         tree[root].full = false;
         return;
     }
     int mid = (left + right) >> 1;
     if (l <= mid) {
-        update(l, c, left, mid, root*2+1);
+        update(l, c, left, mid, lson);
     } else {
-        update(l, c, mid+1, right, root*2+2);
+        update(l, c, mid+1, right, rson);
     }
     pushUp(root);
 }
 
 int main() {
     int size = 0;
-    int num  = 0;
     scanf("%d", &size);
     for (int i = 0; i < size; i++) {
         scanf("%d", &input[i]);
     }
     build(0, size-1, 0);
+
+    int num = 0;
     for (int i = 0; i < size; i++) {
         scanf("%d", &num);
         update(num-1, 0, 0, size-1, 0);
