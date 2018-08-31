@@ -39,79 +39,84 @@
 -1  
 
 ### 问题分析
+1. 将每一行都看成一个节点（节点数量，要取**海报数量**和**墙高度**的**最小值**，因为可能墙很高，但是没几张海报，导致数组越界），每个节点上维护**剩余可用长度**。
+1. pushUp 的时候，将可用最大剩余长度 pushUp 上去。根节点就是当前整个最大可用的长度。
+1. 每次查询的时候，判断输入长度，是否超过整个数组可用长度，如果超过，直接返回 -1。
+1. 更新数据时，将当前节点的可用长度，减去输入的数值，再把结果 pushUp 上去。
 
 ### Code
 ```cpp
 #include<cstdio>
 #include<algorithm>
 
+#define lson root*2+1
+#define rson root*2+2
+
 using namespace std;
 
-const int MAX = 2e5+5;
+const int MAX = 2e5;
 int input[MAX];
 struct {
-    int sum;
+    int len;
 } tree[MAX<<2];
 
 void pushUp(int root) {
-    tree[root].sum = max(tree[root*2+1].sum, tree[root*2+2].sum);
+    tree[root].len = max(tree[lson].len, tree[rson].len);
 }
 
 void build(int left, int right, int root, int w) {
     if (left == right) {
-        tree[root].sum = w;
+        tree[root].len = w;
         return;
     }
     int mid = (left + right) >> 1;
-    build(left, mid, root*2+1, w);
-    build(mid+1, right, root*2+2, w);
+    build(left, mid, lson, w);
+    build(mid+1, right, rson, w);
     pushUp(root);
 }
 
 void update(int l, int c, int left, int right, int root) {
     if (left == right) {
-        tree[root].sum -= c;
+        tree[root].len -= c;
         return;
     }
     int mid = (left + right) >> 1;
     if (l <= mid) {
-        update(l, c, left, mid, root*2+1);
+        update(l, c, left, mid, lson);
     } else {
-        update(l, c, mid+1, right, root*2+2);
+        update(l, c, mid+1, right, rson);
     }
     pushUp(root);
 }
 
-int query(int left, int right, int root, int key) {
-    if (key > tree[root].sum) {
+int query(int left, int right, int root, int w) {
+    if (w > tree[root].len) {
         return -1;
     }
-
     if (left == right) {
-        return left + 1;
+        return left+1;
     }
-
     int mid = (left + right) >> 1;
-    if (key <= tree[root*2+1].sum) {
-        return query(left, mid, root*2+1, key);
+    if (w <= tree[lson].len) {
+        return query(left, mid, lson, w);
     } else {
-        return query(mid+1, right, root*2+2, key);
+        return query(mid+1, right, rson, w);
     }
 }
 
 int main() {
     int h, w, n;
     while (~scanf("%d %d %d", &h, &w, &n)) {
-        int num = 0;
-        int ans = -1;
-        build(0, min(n, h-1), 0, w);
-        for (int i = 0; i < n; i++) {
+        int size = min(h, n);
+        build(0, size-1, 0, w);
+        int num = 0, res = 0;
+        while (n--) {
             scanf("%d", &num);
-            ans = query(0, min(n, h-1), 0, num);
-            printf("%d\n", ans);
-            if (ans > 0) {
-                update(ans-1, num, 0, min(n, h-1), 0);
+            res = query(0, size-1, 0, num);
+            if (res >= 0) {
+                update(res-1, num, 0, size-1, 0);
             }
+            printf("%d\n", res);
         }
     }
     return 0;
