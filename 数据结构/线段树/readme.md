@@ -80,6 +80,51 @@ public static int query(int start, int end, int left, int right, int root) {
 ```
 
 ### 区间更新
+#### 区间更新与单点更新的区别
+##### lazy 标记
+维护的数据相比单点更新，需要多维护一个 lazy 标记，lazy 数组的大小与线段树相同，需要开 4 倍空间。
+
+##### 多了一个 pushDown 函数
+> pushDown 的主要思想
+    * 如果 lazy 标记存在，将 lazy 传递给左右子树，并更新左右子树的数据。
+    * 清空本层 lazy 标记。
+
+```cpp
+void pushDown(int left, int right, int root) {
+    if (lazy[root]) {
+        int mid = (left + right) >> 1;
+        // lazy 标记传递给左右子树
+        lazy[lson] = lazy[rson] = lazy[root];
+        // 更新左右子树节点数据
+        tree[lson].sum = lazy[root] * (mid - left + 1);
+        tree[rson].sum = lazy[root] * (right - mid);
+        // 清除本层 lazy 标记
+        lazy[root] = 0;
+    }
+}
+```
+##### update 时，参数的变化
+相比单点更新，区间更新的`update`会传入更新区间的左右端点。所以递归的时候，不能简单的用 if - else 判断，需要判断左右端点与 `mid` 之间的关系。
+```cpp
+void update(int ql, int qr, int c, int left, int right, int root) {
+    if (ql <= left && qr >= right) {
+        tree[root].sum = c * (right - left + 1);
+        lazy[root] = c;
+        return;
+    }
+    pushDown(left, right, root);
+    int mid = (left + right) >> 1;
+    // 这里需要两次判断，不能简单的用 if-else
+    if (ql <= mid) {
+        update(ql, qr, c, left, mid, lson);
+    } 
+    if (qr > mid) {
+        update(ql, qr, c, mid+1, right, rson);
+    }
+    pushUp(root);
+}
+```
+
 ### 区间合并
 #### 区间合并与单点更新的主要区别
 1. 单点更新大部分情况下，一个节点只需要维护一个数据即可，一般 tree 是一个整型数组。对于区间合并问题，一般 tree 是一个结构体数组，一个节点通常需要维护多个数据。
