@@ -125,6 +125,25 @@ void update(int ql, int qr, int c, int left, int right, int root) {
 }
 ```
 
+* query 函数样例
+```cpp
+long long query(int ql, int qr, int left, int right, int root) {
+    if (ql <= left && qr >= right) {
+        return tree[root].sum;
+    }
+    pushDown(left, right, root);
+    int mid = (left + right) >> 1;
+    long long l = 0, r = 0;
+    if (ql <= mid) {
+        l += query(ql, qr, left, mid, lson);
+    }
+    if (qr > mid) {
+        r += query(ql, qr, mid+1, right, rson);
+    }
+    return l + r;
+}
+```
+
 ### 区间合并
 #### 区间合并与单点更新的主要区别
 1. 单点更新大部分情况下，一个节点只需要维护一个数据即可，一般 tree 是一个整型数组。对于区间合并问题，一般 tree 是一个结构体数组，一个节点通常需要维护多个数据。
