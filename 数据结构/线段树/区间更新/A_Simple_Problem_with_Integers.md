@@ -33,7 +33,6 @@ Q 2 4
 The sums may exceed the range of 32-bit integers.
 
 ### Code
-* 由于 poj 暂时无法访问，代码并没有 AC，样例通过
 ```cpp
 #include<cstdio>
 #include<cstring>
@@ -45,7 +44,7 @@ The sums may exceed the range of 32-bit integers.
 using namespace std;
 
 const int MAX = 1e5+5;
-long long input[MAX];
+int input[MAX];
 long long lazy[MAX<<2];
 struct {
     long long sum;
@@ -58,7 +57,8 @@ void pushUp(int root) {
 void pushDown(int left, int right, int root) {
     if (lazy[root]) {
         int mid = (left + right) >> 1;
-        lazy[lson] = lazy[rson] = lazy[root];
+        lazy[lson] += lazy[root];
+        lazy[rson] += lazy[root];
         tree[lson].sum += lazy[root] * (mid - left + 1);
         tree[rson].sum += lazy[root] * (right - mid);
         lazy[root] = 0; 
@@ -112,22 +112,23 @@ long long query(int ql, int qr, int left, int right, int root) {
 
 int main() {
     int size, line;
-    scanf("%d %d", &size, &line);
-    for (int i = 1; i <= size; i++) {
-        scanf("%d", &input[i]);
-    }
-    build(1, size, 1);
+    while (~scanf("%d %d", &size, &line)) {
+        for (int i = 1; i <= size; i++) {
+            scanf("%d", &input[i]);
+        }
+        build(1, size, 1);
 
-    char action[2];
-    int num1, num2, num3;
-    while (line--) {
-        scanf("%s", action);
-        if (0 == strcmp(action, "Q")) {
-            scanf("%d %d", &num1, &num2);
-            printf("%lld\n", query(num1, num2, 1, size, 1));
-        } else if (0 == strcmp(action, "C")) {
-            scanf("%d %d %d", &num1, &num2, &num3);
-            update(num1, num2, num3, 1, size, 1);
+        char action[2];
+        int num1, num2, num3;
+        while (line--) {
+            scanf("%s", action);
+            if (0 == strcmp(action, "Q")) {
+                scanf("%d %d", &num1, &num2);
+                printf("%lld\n", query(num1, num2, 1, size, 1));
+            } else if (0 == strcmp(action, "C")) {
+                scanf("%d %d %d", &num1, &num2, &num3);
+                update(num1, num2, num3, 1, size, 1);
+            }
         }
     }
     return 0;
