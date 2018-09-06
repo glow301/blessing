@@ -1,4 +1,5 @@
 ## Just a Hook
+> HDU - 1698
 
 ### Description
 In the game of DotA, Pudge’s meat hook is actually the most horrible thing for most of the heroes. The hook is made up of several consecutive metallic sticks which are of the same length. 
