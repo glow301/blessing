@@ -86,8 +86,8 @@ public static int query(int start, int end, int left, int right, int root) {
 
 ##### 多了一个 pushDown 函数
 > pushDown 的主要思想
-    * 如果 lazy 标记存在，将 lazy 传递给左右子树，并更新左右子树的数据。
-    * 清空本层 lazy 标记。
+* 如果 lazy 标记存在，将 lazy 传递给左右子树，并更新左右子树的数据。
+* 清空本层 lazy 标记。
 
 ```cpp
 void pushDown(int left, int right, int root) {
@@ -108,8 +108,10 @@ void pushDown(int left, int right, int root) {
 ```cpp
 void update(int ql, int qr, int c, int left, int right, int root) {
     if (ql <= left && qr >= right) {
-        tree[root].sum = c * (right - left + 1);
+        // 更新 lazy 标记
         lazy[root] = c;
+        // 更新结点数据
+        tree[root].sum = c * (right - left + 1);
         return;
     }
     pushDown(left, right, root);
