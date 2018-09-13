@@ -16,6 +16,10 @@
 * [区间合并](#区间合并)
 * [扫描线](#扫描线)
 
+#### 关于`pushUp` 和 `pushDown`
+* pushUp 中，只更新本层节点，不更新子节点。
+* pushDown 中，只更新子节点，不更新本层节点。
+
 #### 单点更新
 > 单点更新是线段树中最基本的操作，每次更新只会更新一个点的数据。
 
@@ -86,7 +90,7 @@ public static int query(int start, int end, int left, int right, int root) {
 
 ##### 多了一个 pushDown 函数
 > pushDown 的主要思想
-* 如果 lazy 标记存在，将 lazy 传递给左右子树，并更新左右子树的数据。
+* **如果 lazy 标记存在**，将 lazy 传递给**左右子树**（这里没有更新当前节点的数据），并更新左右子树的数据。
 * 清空本层 lazy 标记。
 
 ```cpp

@@ -30,6 +30,10 @@ P 1 2
 
 ### 问题分析
 
+### 错误记录
+1. `pushDown` 的时候，`1 << (lazy[root]-1)` 写成了 `1 <<(lazy[root])`
+1. `query` 中， `return tree[root].sum` 写成了 `return tree[1].sum`
+
 ### Code
 ```cpp
 #include<cstdio>
