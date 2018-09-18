@@ -22,13 +22,13 @@ struct Edge {
 ```
 我们使用 `from` 表示一条边的起点，`to` 表示一条边的终点， `w` 表示这条边的权值。
 那么，数组中元素的含义如下
-* edge[i].next
+* edge[i].next  
     与第 i 条边同起点的下条边的位置（也就是在 `edge` 数组中的索引）
-* edge[i].to
+* edge[i].to  
     第 i 条边的起点
-* edge[i].w
+* edge[i].w  
     第 i 条边的权值
-* head[i]
+* head[i]  
     以 i 为起点的第一条边的存储位置
 
 ##### 添加一条边
@@ -39,7 +39,7 @@ struct Edge {
  * tot 是数组的索引
  */
 void add(int u, int v, int w) {
-    edge[tot].v = v;
+    edge[tot].v = v;
     edge[tot].w = w;
     edge[tot].next = head[u];
     head[u] = tot++;
@@ -48,7 +48,7 @@ void add(int u, int v, int w) {
 
 ##### 遍历
 ```cpp
-for (int i = head[u]; i != -1; i = edge[i].next) {
+for (int i = head[u]; i != -1; i = edge[i].next) {
     // ...
 }
 ```
