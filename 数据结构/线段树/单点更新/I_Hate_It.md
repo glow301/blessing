@@ -124,26 +124,27 @@ public class Main {
 ### c++ 版
 ```cpp
 #include<cstdio>
+#include<cstring>
 #include<algorithm>
 
-#define lson root*2+1
-#define rson root*2+2
+#define lson root<<1
+#define rson root<<1|1
 
 using namespace std;
 
-const int MAX = 2e5;
-int input[MAX];
+const int MAX = 2e5+5;
 struct {
-    int score;
+    int sum;
 } tree[MAX<<2];
+int input[MAX];
 
 void pushUp(int root) {
-    tree[root].score = max(tree[lson].score, tree[rson].score);
+    tree[root].sum = max(tree[lson].sum, tree[rson].sum);
 }
 
 void build(int left, int right, int root) {
     if (left == right) {
-        tree[root].score = input[left];
+        tree[root].sum = input[left];
         return;
     }
     int mid = (left + right) >> 1;
@@ -154,7 +155,7 @@ void build(int left, int right, int root) {
 
 void update(int l, int c, int left, int right, int root) {
     if (left == right) {
-        tree[root].score = c;
+        tree[root].sum = c;
         return;
     }
     int mid = (left + right) >> 1;
@@ -166,39 +167,39 @@ void update(int l, int c, int left, int right, int root) {
     pushUp(root);
 }
 
-int query(int start, int end, int left, int right, int root) {
-    if (start <= left && end >= right) {
-        return tree[root].score;
+int query(int ql, int qr, int left, int right, int root) {
+    if (ql <= left && qr >= right) {
+        return tree[root].sum;
     }
     int mid = (left + right) >> 1;
     int l = 0, r = 0;
-    if (start <= mid) {
-        l = query(start, end, left, mid, lson);
+    if (ql <= mid) {
+        l = query(ql, qr, left, mid, lson);
     }
-    if (end > mid) {
-        r = query(start, end, mid+1, right, rson);
+    if (qr > mid) {
+        r = query(ql, qr, mid+1, right, rson);
     }
     return max(l, r);
 }
 
 int main() {
     int size, line;
-    while (~scanf("%d %d", &size, &line)) {
-        for (int i = 0; i < size; i++){
+    while(~scanf("%d %d", &size, &line)) {
+        for (int i = 1; i <= size; i++) {
             scanf("%d", &input[i]);
         }
-        build(0, size-1, 0);
-        int num1, num2;
-        char action[2];
+        build(1, size, 1);
         while (line--) {
-            scanf("%s %d %d", action, &num1, &num2);
-            if ('Q' == action[0]) {
-                printf("%d\n", query(num1-1, num2-1, 0, size-1, 0));
-            }
-            if ('U' == action[0]) {
-                update(num1-1, num2, 0, size-1, 0);
+            char op[2];
+            int x, y;
+            scanf("%s %d %d", op, &x, &y);
+            if ('Q' == op[0]) {
+                printf("%d\n", query(x, y, 1, size, 1));
+            } else {
+                update(x, y, 1, size, 1);
             }
         }
     }
+    return 0;
 }
 ```
