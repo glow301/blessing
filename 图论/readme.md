@@ -15,10 +15,10 @@
 const int MAX = 1e4;
 
 struct Edge {
-    int next;   // 下一条边存储的位置
+    int next;   // 下一条边存储的位置
     int to;     // 边的终点
     int w;      // 边的权值
-} edge[MAX]
+} edge[MAX];
 ```
 我们使用 `from` 表示一条边的起点，`to` 表示一条边的终点， `w` 表示这条边的权值。
 那么，数组中元素的含义如下
