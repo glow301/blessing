@@ -32,18 +32,24 @@ struct Edge {
     > 以 i 为起点的第一条边的存储位置
 
 ##### 添加一条边
-```cpp
-/**
- * 说明
- * u, v, w 分别表示边的 起点，重点，权值
- * tot 是数组的索引
- */
-void add(int u, int v, int w) {
-    edge[tot].v = v;
-    edge[tot].w = w;
-    edge[tot].next = head[u];
-    head[u] = tot++;
-}
+* 对于无向图，需要调用两次 add 函数
+    ```cpp
+    add(u, v, w);
+    add(v, u, w);
+    ```
+    
+    ```cpp
+    /**
+    * 说明
+    * u, v, w 分别表示边的 起点，重点，权值
+    * tot 是数组的索引
+    */
+    void add(int u, int v, int w) {
+        edge[tot].v = v;
+        edge[tot].w = w;
+        edge[tot].next = head[u];
+        head[u] = tot++;
+    }
 ```
 
 ##### 遍历
@@ -52,3 +58,30 @@ for (int i = head[u]; i != -1; i = edge[i].next) {
     // ...
 }
 ```
+
+#### 树的直径
+> 树的直径指的是，树上的最长简单路。
+
+##### 求法
+> 两遍 DFS 或 BFS
+1. 选取任意一个顶点作为起点，对树进行搜索，找到距离该点最远的点 v。
+1. 以 v 为起点，再进行搜索，找到距离 v 最远的点 u, u 到 v 之间的距离就是树的直径。
+```cpp
+/**
+ * @params u 作为起点搜索的点
+ * @params parent 标记该点是否被访问过
+ * dis[v] 表示 以 v 为终点到 u 的距离
+ */
+void dfs (int u, int parent) {
+    for (int i = head[u]; -1 != i; i = edge[i].next) {
+        v = edge[i].to;
+        if (v == parent) {
+            continue;
+        }
+        dis[v] = dis[u] + edge[i].w;
+        dfs(v, u);
+    }
+}
+```
+
+#### 树的重心
