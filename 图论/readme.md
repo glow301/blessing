@@ -50,7 +50,7 @@ struct Edge {
         edge[tot].next = head[u];
         head[u] = tot++;
     }
-```
+   ```
 
 ##### 遍历
 ```cpp
