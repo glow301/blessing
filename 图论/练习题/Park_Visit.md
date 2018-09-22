@@ -31,7 +31,7 @@ For each query, output the minimum walking distance, one per line.
 ### 问题分析
 
 ### 错误记录
-1. 多 case 的问题，没有对 head 做初始化。
+1. 多 case 的问题，没有对 head 做初始化。
 1. edge 数组没有开两倍空间（无向图，双向加边）。
 
 ### Code
