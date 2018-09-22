@@ -25,6 +25,7 @@ You are to output a single integer: the road distance between the two most remot
 
 ### 问题分析
 * 这个题需要注意一点，如果输入为空的情况下，需要输出 0。
+* 对于无向图而言，`edge`数组要开两倍空间，因为双向加边。
 
 ### Code
 ```cpp
@@ -38,7 +39,7 @@ const int MAX =1e4+5;
 int head[MAX];
 struct Edge {
     int w, to, next;
-} edge[MAX];
+} edge[MAX<<1];
 int tot = 0;
 int dis[MAX];
 
