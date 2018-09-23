@@ -77,7 +77,7 @@ For each case, output the minimum inversion number on a single line.
 * 通过观察可以发现，数组变化一次，逆序数和前一次有以下关系
     1. 第一个元素移动到队尾，那么，之前在**它后面比它大**的元素就由**非逆序变为逆序**了，**它后面比它小**的元素，就由**逆序变为非逆序**了（多读几遍，理解一下）
         * 比如 [2, 1, 3] 变成 [1, 3, 2]，2 后面比 2 大的 3，之前非逆序，现在就逆序了，比 2 小的 1，逆序变成非逆序了。
-    1. 那么假设上一次的逆序数是 `sum`，序列长度是 N，变化后的序列逆序数 `sum1 = sum + N - input[i] - 1 - input[i]`
+    1. 那么假设上一次的逆序数是 `sum`，序列长度是 N，变化后的序列逆序数 `sum1 = sum + N - input[i] - 1 - input[i]`（由于在第一次求出逆序数之后，序列重所有的位置都被置为了 1，所以可以直接用索引的加减来计算）
         * [1, 1, input[i], 1, 1, 1]，加上 input[i] 后面比 input[i] 大的（6 - 2 - 1），减去 ipnut[i] 前面比 input[i] 小的（2）。
         * 上面这个例子中，N = 6，input[i] = 2
 
@@ -85,75 +85,82 @@ For each case, output the minimum inversion number on a single line.
 ### Code
 ```cpp
 #include<cstdio>
+#include<cstring>
 #include<algorithm>
+
+#define lson root*2+1
+#define rson root*2+2
 
 using namespace std;
 
-const int MAX = 5000;
-int tree[MAX<<2];
+const int MAX = 5005;
+struct {
+    int sum;
+} tree[MAX<<2];
 int input[MAX];
 
 void pushUp(int root) {
-    tree[root] =  tree[root*2+1] + tree[root*2+2];
+    tree[root].sum = tree[lson].sum + tree[rson].sum;
 }
 
 void build(int left, int right, int root) {
     if (left == right) {
-        tree[root] = 0;
+        tree[root].sum = 0;
         return;
     }
     int mid = (left + right) >> 1;
-    build(left, mid, root*2+1);
-    build(mid+1, right, root*2+2);
+    build(left, mid, lson);
+    build(mid+1, right, rson);
     pushUp(root);
 }
 
 void update(int l, int c, int left, int right, int root) {
     if (left == right) {
-        tree[root] = 1;
+        tree[root].sum = 1;
         return;
     }
     int mid = (left + right) >> 1;
     if (l <= mid) {
-        update(l, c, left, mid, root*2+1);
+        update(l, c, left, mid, lson);
     } else {
-        update(l, c, mid+1, right, root*2+2);
+        update(l, c, mid+1, right, rson);
     }
     pushUp(root);
 }
 
-int query(int start, int end, int left, int right, int root) {
-    if (start <= left && end >= right) {
-        return tree[root];
+int query(int ql, int qr, int left, int right, int root) {
+    if (ql <= left && qr >= right) {
+        return tree[root].sum;
     }
     int mid = (left + right) >> 1;
-    int l = 0, r = 0;
-    if (start <= mid) {
-        l = query(start, end, left, mid, root*2+1);
+    int res = 0;
+    if (ql <= mid) {
+        res += query(ql, qr, left, mid, lson);
     }
-    if (end > mid) {
-        r = query(start, end, mid+1, right, root*2+2);
+    if (qr > mid) {
+        res += query(ql, qr, mid+1, right, rson);
     }
-    return l + r;
+    return res;
 }
 
 int main() {
-    int size = 0;
-    while (scanf("%d", &size) != EOF) {
-        int sum = 0;
+    int size;
+    while (~scanf("%d", &size)) {
         build(0, size-1, 0);
+        int sum = 0;
         for (int i = 0; i < size; i++) {
             scanf("%d", &input[i]);
             sum += query(input[i], size-1, 0, size-1, 0);
             update(input[i], 1, 0, size-1, 0);
         }
-    
+
         int ans = sum;
         for (int i = 0; i < size; i++) {
             sum += size - input[i] - 1 - input[i];
-            ans = min(ans, sum);
+            ans = min(sum, ans);
         }
         printf("%d\n", ans);
     }
+    return 0;
 }
 ```
