@@ -24,8 +24,11 @@ You are to output a single integer: the road distance between the two most remot
 22
 
 ### 问题分析
+* 题目要求找到这些村庄之间，最远的两个村庄之间的距离。把每一个村庄看成一个点，把每个村庄连起来，就形成了一棵树，其实就是求这棵树上的直径。
+* 调用两次 dfs 求出直径即可。
+
+### Tips
 * 这个题需要注意一点，如果输入为空的情况下，需要输出 0。
-* 对于无向图而言，`edge`数组要开两倍空间，因为双向加边。
 
 ### Code
 ```cpp

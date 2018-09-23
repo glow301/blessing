@@ -29,6 +29,9 @@ Write to the output the minimal amount of fuel needed to clean all streets.
 6 
 
 ### 问题分析
+* 题目要求遍历所有的点，求出路径的最小值。
+* 树上最上的路径是树的直径，既然要求最小值，我们要满足**直径上的点只走一次**，其他的点必然要走两次才能遍历完所有的点。假设路径的总和是 N，树的直径是 d。
+其实，答案应该是 (N-d) * 2 + d = 2N - d
 
 ### Code
 ```cpp
