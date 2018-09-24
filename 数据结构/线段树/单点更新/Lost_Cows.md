@@ -47,21 +47,29 @@ Given this data, tell FJ the exact ordering of the cows.
     1. 每次删除元素时，将当前元素置为 0。
     1. 当第 k 大的元素落在**右子树**时，第 k 大要变成 k-tree[lson] sum 大。
 
+### 错误记录
+1. 查询右区间的时候，第 k 大写错，应该为 `key - tree[lson].sum`
+1. main 函数中，每次查询剩余数组中**第 k+1 大**
+
 ### 代码
 ```cpp
 #include<cstdio>
+#include<cstring>
 #include<algorithm>
+
+#define lson root<<1
+#define rson root<<1|1
 
 using namespace std;
 
 const int MAX = 8005;
-int input[MAX];
 struct {
     int sum;
 } tree[MAX<<2];
+int input[MAX];
 
 void pushUp(int root) {
-    tree[root].sum = tree[root*2].sum + tree[root*2+1].sum;
+    tree[root].sum = tree[lson].sum + tree[rson].sum;
 }
 
 void build(int left, int right, int root) {
@@ -70,22 +78,22 @@ void build(int left, int right, int root) {
         return;
     }
     int mid = (left + right) >> 1;
-    build(left, mid, root*2);
-    build(mid+1, right, root*2+1);
+    build(left, mid, lson);
+    build(mid+1, right, rson);
     pushUp(root);
 }
 
-int update(int left, int right, int root, int key) {
+int query(int left, int right, int root, int key) {
     if (left == right) {
         tree[root].sum = 0;
         return left;
     }
     int mid = (left + right) >> 1;
     int ans = 0;
-    if (key <= tree[root*2].sum) {
-        ans = update(left, mid, root*2, key);
+    if (key <= tree[lson].sum) {
+        ans = query(left, mid, lson, key);
     } else {
-        ans = update(mid+1, right, root*2+1, key - tree[root*2].sum);
+        ans = query(mid+1, right, rson, key - tree[lson].sum);
     }
     pushUp(root);
     return ans;
@@ -100,14 +108,14 @@ int main() {
         }
         build(1, size, 1);
 
-        int ans[size];
+        int res[size];
         for (int i = size; i > 0; i--) {
-            ans[i] = update(1, size, 1, input[i]+1);
+            res[i] = query(1, size, 1, input[i]+1);
         }
-
         for (int i = 1; i <= size; i++) {
-            printf("%d\n", ans[i]);
+            printf("%d\n", res[i]);
         }
     }
+    return 0;
 }
 ```
