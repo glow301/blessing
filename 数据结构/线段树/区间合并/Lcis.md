@@ -63,6 +63,10 @@ Q 0 9
 * update 和 query 时，比较的对象，永远都是 mid.
 * 动手之前，想一想，线段树维护的节点信息是什么。
 
+### 错误记录
+1. 题目查询索引可能从 0 开始，第一次构建的线段树是从 1 开始的，没有注意（要读懂题意）
+1. query 函数中，`if (tree[lson].right < tree[rson].left)` 这里条件写错了。
+
 ### code
 ```cpp
 #include<cstdio>
@@ -74,47 +78,46 @@ Q 0 9
 
 using namespace std;
 
-const int MAX = 1e5;
-int input[MAX];
+const int MAX = 1e5+5;
 struct {
-    int llcis, rlcis, lcis, left, right;
+    int left, right, lcis, llcis, rlcis;
 } tree[MAX<<2];
+int input[MAX];
 
-void pushUp(int root, int left, int right) {
-    tree[root].llcis = tree[lson].llcis;
-    tree[root].rlcis = tree[rson].rlcis;
+void pushUp(int left, int right, int root) {
     tree[root].left  = tree[lson].left;
     tree[root].right = tree[rson].right;
+    tree[root].llcis = tree[lson].llcis;
+    tree[root].rlcis = tree[rson].rlcis;
+    tree[root].lcis  = max(tree[lson].lcis, tree[rson].lcis);
 
-    tree[root].lcis = max(tree[lson].lcis, tree[rson].lcis);
-
-    int mid = (left + right) >> 1;
     if (tree[lson].right < tree[rson].left) {
-        if (mid - left + 1 == tree[root].llcis) {
+        int mid = (left + right) >> 1;
+        if (tree[root].llcis == mid - left + 1) {
             tree[root].llcis += tree[rson].llcis;
         }
-        if (right - mid == tree[root].rlcis) {
+        if (tree[root].rlcis == right - mid) {
             tree[root].rlcis += tree[lson].rlcis;
         }
         tree[root].lcis = max(tree[root].lcis, tree[lson].rlcis + tree[rson].llcis);
     }
 }
 
-void build(int left, int right, int root) {
+void build (int left, int right, int root) {
     if (left == right) {
-        tree[root].llcis = tree[root].rlcis = tree[root].lcis = 1;
+        tree[root].lcis = tree[root].llcis = tree[root].rlcis = 1;
         tree[root].left = tree[root].right = input[left];
         return;
     }
     int mid = (left + right) >> 1;
     build(left, mid, lson);
     build(mid+1, right, rson);
-    pushUp(root, left, right);
+    pushUp(left, right, root);
 }
 
 void update(int l, int c, int left, int right, int root) {
     if (left == right) {
-        tree[root].left =  tree[root].right = c;
+        tree[root].left = tree[root].right = c;
         return;
     }
     int mid = (left + right) >> 1;
@@ -123,50 +126,49 @@ void update(int l, int c, int left, int right, int root) {
     } else {
         update(l, c, mid+1, right, rson);
     }
-    pushUp(root, left, right);
+    pushUp(left, right, root);
 }
 
-int query(int start, int end, int left, int right, int root) {
-    if (start <= left && end >= right) {
+int query(int ql, int qr, int left, int right, int root) {
+    if (ql <= left && qr >= right) {
         return tree[root].lcis;
     }
     int mid = (left + right) >> 1;
     int l = 0, r = 0;
-    int ans = 0;
-    if (start <= mid) {
-        l = query(start, end, left, mid, lson);
+    if (ql <= mid) {
+        l = query(ql, qr, left, mid, lson);
     }
-    if (end > mid) {
-        r = query(start, end, mid+1, right, rson);
+    if (qr > mid) {
+        r = query(ql, qr, mid+1, right, rson);
     }
-    ans = max(l, r);
+    int ans = max(l, r);
     if (tree[lson].right < tree[rson].left) {
-        int llcis = min(tree[lson].rlcis, mid - start + 1);
-        int rlcis = min(tree[rson].llcis, end - mid);
-        ans = max(ans, llcis + rlcis);
+        int lrlcis = min(tree[lson].rlcis, mid - ql +1);
+        int rllcis = min(tree[rson].llcis, qr - mid);
+        ans = max(ans, lrlcis + rllcis);
     }
     return ans;
 }
 
 int main() {
-    int line = 0;
+    int line;
     scanf("%d", &line);
     while (line--) {
-        int size, row;
-        scanf("%d %d", &size, &row);
-        for (int i = 0; i < size; i++) {
+        int n, m;
+        scanf("%d %d", &n, &m);
+        for (int i = 0; i < n; i++) {
             scanf("%d", &input[i]);
         }
-        build(0, size-1, 0);
+        build(0, n-1, 0);
 
-        while (row--) {
-            char action[2];
-            int num1, num2;
-            scanf("%s %d %d", action, &num1, &num2);
-            if (0 == strcmp(action, "Q")) {
-                printf("%d\n", query(num1, num2, 0, size-1, 0));
-            } else if (0 == strcmp(action, "U")) {
-                update(num1, num2, 0, size-1, 0);
+        while (m--) {
+            char op[2];
+            int a, b;
+            scanf("%s %d %d", op, &a, &b);
+            if ('Q' == op[0]) {
+                printf("%d\n", query(a, b, 0, n-1, 0));
+            } else {
+                update(a, b, 0, n-1, 0);
             }
         }
     }
