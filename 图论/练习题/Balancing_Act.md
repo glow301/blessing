@@ -32,4 +32,80 @@ For each test case, print a line containing two integers, the number of the node
 
 ### 问题分析
 
+### 错误记录
+1. balance 数组没有初始化，多 case 时导致错误。
+
 ### Code
+```cpp
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
+
+using namespace std;
+
+const int MAX = 2e4+5;
+
+int head[MAX];
+struct Edge {
+    int to, w, next;
+} edge[MAX<<1];
+int size[MAX];
+int balance[MAX];
+int tot = 0;
+int n = 0;
+
+void init() {
+    tot = 0;
+    memset(balance, 0, sizeof(balance));
+    memset(head, -1, sizeof(head));
+}
+
+void add(int u, int v, int w) {
+    edge[tot].to = v;
+    edge[tot].w  = w;
+    edge[tot].next = head[u];
+    head[u] = tot++;
+}
+
+
+void dfs(int u, int parent) {
+    size[u] = 1;
+    for (int i = head[u]; -1 != i; i = edge[i].next) {
+        int v = edge[i].to;
+        if (v == parent) {
+            continue;
+        }
+        dfs(v, u);
+        size[u] += size[v];
+        balance[u] = max(size[v], balance[u]);
+    }
+    balance[u] = max(balance[u], n - size[u]);
+}
+
+
+int main() {
+    int T;
+    scanf("%d", &T);
+    while (T--) {
+        init();
+        scanf("%d", &n);
+        int a, b;
+        for (int i = 1; i < n; i++) {
+            scanf("%d %d", &a, &b);
+            add(a, b, 1);
+            add(b, a, 1);
+        }        
+        
+        dfs(1, -1);
+        int tmp = n, node = 1;
+        for (int i = 1; i <= n; i++) {
+            if (balance[i] < tmp) {
+                tmp = balance[i];
+                node = i;
+            }
+        }
+        printf("%d %d\n", node, tmp);
+    }
+    return 0;
+}
+```
