@@ -6,3 +6,5 @@
 [[HDU - 2196] Computer](./Computer.md)
 
 #### 树的重心
+[[POJ - 1655] Balancing Act](./Banancing_act.md)
+[[POJ - 3107]Godfather](./Godfather.md)

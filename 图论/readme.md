@@ -88,3 +88,30 @@ void dfs (int u, int parent) {
 ```
 
 #### 树的重心
+> 树的重心也叫树的质心。找到一个点,其所有的子树中**最大的子树**节点数**最少**,那么这个点就是这棵树的重心,删去重心后，生成的多棵树尽可能平衡。
+
+##### 性质
+* 一棵树可以有一个重心，或两个**相邻**的重心。
+* 把两个树通过一条边相连得到一个新的树，那么新的树的重心在**连接原来两个树的重心的路径**上。
+
+##### 求法
+> 一遍 dfs 就可以求出树的重心
+
+* size[u] 表示以 u 为根的树包含的节点数（包含自己）。
+* balance[u] 表示以 u 为根的所有子树中，最大子树的节点个数（balance 数组需要初始化）。
+* 一次 dfs 之后，遍历 balance 数组，找出**最小**的那个（balance[i] 最小的），索引 i 就是重心的编号。
+```cpp
+void dfs(int u, int parent) {
+    size[u] = 1;
+    for (int i = head[u]; -1 != i; i = edge[i].next) {
+        int v = edge[i].to;
+        if (v == parent) {
+            continue;
+        }
+        dfs(v, u);
+        size[u] += size[v];
+        balance[u] = max(size[v], balance[u]);
+    }
+    balance[u] = max(balance[u], n - size[u]);
+}
+```
