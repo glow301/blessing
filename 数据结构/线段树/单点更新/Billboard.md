@@ -5,23 +5,23 @@
  
 每个社团为了吸引更多的小学妹小学弟就会派出身强体壮的华师男去海报墙上粘贴海报。
  
-开学之初，高为h，宽为w的海报墙还是空的。
+开学之初，高为 h，宽为 w 的海报墙还是空的。
  
-然后，华师男轮流粘贴高为1，宽为wi的海报。
+然后，华师男轮流粘贴高为 1，宽为 wi 的海报。
 
 贴海报时，机智的华师男总是会优先选择最上面的位置来帖，而且在所有最上面的可能位置中，他会选择最左面的位置。但是不能把已经贴好的海报盖住并且不能超出海报墙的范围。
  
 机智的华师男能够自然能够秒秒钟得出自己的海报应该粘贴在第几行啦。
 
 ### Input
-有多组样例，但是不会超过40个。
+有多组样例，但是不会超过 40 个。
  
-对于每组样例，第一行包含3个整数h，w，n(1 <= h,w <= 10^9; 1 <= n <= 200,000) -海报墙的高度和宽度，以及海报的张数。 
+对于每组样例，第一行包含 3 个整数 h，w，n(1 <= h,w <= 10^9; 1 <= n <= 200,000) -海报墙的高度和宽度，以及海报的张数。 
 
-下面n行每行一个整数 wi (1 <= wi <= 10^9) -  代表第i张海报的宽度.
+下面n行每行一个整数 wi (1 <= wi <= 10^9) -  代表第 i 张海报的宽度.
 
 ### Output
-对于每张海报，输出它被贴在第几行，顶部是第一行。如果某广告不能贴不下了，则输出-1。
+对于每张海报，输出它被贴在第几行，顶部是第一行。如果某广告不能贴不下了，则输出 -1。
 
 ### Sample Input
 3 5 5  
@@ -47,26 +47,27 @@
 ### Code
 ```cpp
 #include<cstdio>
+#include<cstring>
 #include<algorithm>
 
-#define lson root*2+1
-#define rson root*2+2
+#define lson root<<1
+#define rson root<<1|1
 
 using namespace std;
 
-const int MAX = 2e5;
-int input[MAX];
+const int MAX = 2e5+5;
 struct {
-    int len;
+    int sum;
 } tree[MAX<<2];
+int size = 0;
 
 void pushUp(int root) {
-    tree[root].len = max(tree[lson].len, tree[rson].len);
+    tree[root].sum = max(tree[lson].sum, tree[rson].sum);
 }
 
 void build(int left, int right, int root, int w) {
     if (left == right) {
-        tree[root].len = w;
+        tree[root].sum = w;
         return;
     }
     int mid = (left + right) >> 1;
@@ -77,7 +78,7 @@ void build(int left, int right, int root, int w) {
 
 void update(int l, int c, int left, int right, int root) {
     if (left == right) {
-        tree[root].len -= c;
+        tree[root].sum -= c;
         return;
     }
     int mid = (left + right) >> 1;
@@ -90,14 +91,14 @@ void update(int l, int c, int left, int right, int root) {
 }
 
 int query(int left, int right, int root, int w) {
-    if (w > tree[root].len) {
+    if (w > tree[root].sum) {
         return -1;
     }
     if (left == right) {
-        return left+1;
+        return left;
     }
     int mid = (left + right) >> 1;
-    if (w <= tree[lson].len) {
+    if (w <= tree[lson].sum) {
         return query(left, mid, lson, w);
     } else {
         return query(mid+1, right, rson, w);
@@ -107,16 +108,17 @@ int query(int left, int right, int root, int w) {
 int main() {
     int h, w, n;
     while (~scanf("%d %d %d", &h, &w, &n)) {
-        int size = min(h, n);
-        build(0, size-1, 0, w);
-        int num = 0, res = 0;
-        while (n--) {
-            scanf("%d", &num);
-            res = query(0, size-1, 0, num);
-            if (res >= 0) {
-                update(res-1, num, 0, size-1, 0);
-            }
+        size = min(h, n);
+        build(1, size, 1, w);
+
+        int width = 0;
+        for (int i = 1; i <= n; i++) {
+            scanf("%d", &width);
+            int res = query(1, size, 1, width);
             printf("%d\n", res);
+            if (res != -1) {
+                update(res, width, 1, size, 1);
+            }
         }
     }
     return 0;
