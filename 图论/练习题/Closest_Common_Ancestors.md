@@ -19,7 +19,7 @@ Note that white-spaces (tabs, spaces and line breaks) can be used freely in the 
 
 ### Output
 For each common ancestor the program prints the ancestor and the number of pair for which it is an ancestor. The results are printed on the standard output on separate lines, in to the ascending order of the vertices, in the format: ancestor:times 
-For example, for the following tree: 
+For example, for the following tree:   
 <img src="../img/Closest_Common_Ancestors.jpg">
 
 ### Sample Input
