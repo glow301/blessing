@@ -48,5 +48,111 @@ Print exactly one line for each test case. The line should contain the integer t
 3  
 
 ### 问题分析
+* 基本是 lca 的裸题，唯一需要注意的是，题目没有给出树的根节点，需要先找到根节点。
 
 ### Code
+```cpp
+#include<cstdio>
+#include<algorithm>
+#include<cstring>
+
+using namespace std;
+
+const int MAX = 1e4+5;
+
+int head[MAX];
+struct Edge {
+    int to, w, next;
+} edge[MAX<<1];
+int size[MAX];
+int tot = 0;
+int n = 0;
+int top[MAX], dep[MAX], fa[MAX], son[MAX], vis[MAX];
+
+void init() {
+    memset(head, -1, sizeof(head));
+    memset(vis, 0, sizeof(vis));
+    tot = 0;
+}
+
+void add(int u, int v, int w) {
+    edge[tot].to = v;
+    edge[tot].w  = w;
+    edge[tot].next = head[u];
+    head[u] = tot++;
+}
+
+void dfs1(int u, int parent, int depth) {
+    dep[u]  = depth;
+    size[u] = 1;
+    fa[u]   = parent;
+    son[u]  = -1;
+    for (int i = head[u]; -1 != i; i = edge[i].next) {
+        int v = edge[i].to;
+        if (v == parent) {
+            continue;
+        }
+        dfs1(v, u, depth+1);
+        size[u] += size[v];
+        if (-1 == son[u] || size[v] > size[son[u]]) {
+            son[u] = v;
+        }
+    }
+}
+
+void dfs2(int u, int tp) {
+    top[u] = tp;
+    if (son[u] == -1) {
+        return;
+    }
+    dfs2(son[u], tp);
+    for (int i = head[u]; -1 != i; i = edge[i].next) {
+        int v = edge[i].to;
+        if (v != son[u] && v != fa[u]) {
+            dfs2(v, v);
+        }
+    }
+}
+
+int lca(int x, int y) {
+    while(top[x] != top[y]) {
+        if (dep[top[x]] > dep[top[y]]) {
+            x = fa[top[x]];
+        } else {
+            y = fa[top[y]];
+        }
+    }
+    return dep[x] > dep[y] ? y : x;
+}
+
+int main() {
+    int T;
+    scanf("%d", &T);
+    while(T--) {
+        init();
+        int num;
+        scanf("%d", &num);
+        int x, y;
+        for (int i = 1; i < num; i++) {
+            scanf("%d %d", &x, &y);               
+            vis[y] = 1;
+            add(x, y, 1);
+            add(y, x, 1);
+        }
+        
+        int root = 0;
+        for (int i = 1; i <= num; i++) {
+            if (!vis[i]) {
+                root = i; 
+            }
+        }
+        dfs1(root, -1, 1);
+        dfs2(root, 1);
+
+
+        scanf("%d %d", &x, &y);
+        printf("%d\n", lca(x, y));
+    }
+    return 0;
+}
+```

@@ -1,5 +1,5 @@
 ## 树链剖分
-> 把一棵树剖分成若干条链，然后用数据结构（树状数组，线段树）去维护每一条链，时间复杂度为 O(log n)。
+> 把一棵树剖分成若干条不相交的链，然后用数据结构（树状数组，线段树）去维护每一条链，时间复杂度为 O(log n)。
 
 ### 基本概念
 | 名称 | 描述 |
@@ -28,7 +28,9 @@
 
 ### 求法
 > 两次 dfs
-* 第一次 dfs，记录所有重边
+* 第一次 dfs，记录所有重边（第一次 dfs 可以找到 重儿子，深度，父节点以及子树节点个数）
+* 第二次 dfs，重边组成重链
+
 ```cpp
 /**
  * u 边的起点 默认 1
@@ -39,6 +41,7 @@ void dfs1(int u, int parent, int depth) {
     dep[u]  = depth;
     size[u] = 1;
     fa[u]   = parent;
+    son[u]  = -1;
     for (int i = head[u]; -1 != i; i = edge[i].next) {
         int v = edge[i].to;
         if (v == parent) {
@@ -53,7 +56,6 @@ void dfs1(int u, int parent, int depth) {
 }
 ```
 
-* 第二次 dfs，重边组成重链
 ```cpp
 /**
  * u 起点，默认 1
@@ -61,14 +63,38 @@ void dfs1(int u, int parent, int depth) {
  * time 默认 0
  */
 void dfs2(int u, int tp) {
-    top[u]       = tp;
-    tid[u]       = ++time;
-    rank[tid[u]] = u;
+    top[u] = tp;
+    if (son[u] == -1) {
+        return;
+    }
+    // 这次 dfs 保证优先访问重儿子
+    dfs2(son[u], tp);
     for (int i = head[u]; -1 != i; i = edge[i].next) {
         int v = edge[i].to;
         if (v != son[u] && v != fa[u]) {
             dfs2(v, v);
         }
     }
+}
+```
+
+### 应用
+#### LCA
+> 最近公共祖先
+```cpp
+int lca(int x, int y) {
+    int tx = top[x], ty = top[y];
+    while (tx != ty) {
+        if (dep[tx] < dep[ty]) {
+            swap(tx, ty);
+            swap(x, y);
+        }
+        x = fa[tx];
+        tx = top[x];
+    }
+    if (dep[x] > dep[y]) {
+        swap(x, y);
+    }
+    return x;
 }
 ```
