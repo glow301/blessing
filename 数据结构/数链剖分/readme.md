@@ -83,18 +83,13 @@ void dfs2(int u, int tp) {
 > 最近公共祖先
 ```cpp
 int lca(int x, int y) {
-    int tx = top[x], ty = top[y];
-    while (tx != ty) {
-        if (dep[tx] < dep[ty]) {
-            swap(tx, ty);
-            swap(x, y);
+    while(top[x] != top[y]) {
+        if (dep[top[x]] > dep[top[y]]) {
+            x = fa[top[x]];
+        } else {
+            y = fa[top[y]];
         }
-        x = fa[tx];
-        tx = top[x];
     }
-    if (dep[x] > dep[y]) {
-        swap(x, y);
-    }
-    return x;
+    return dep[x] > dep[y] ? y : x;
 }
 ```
