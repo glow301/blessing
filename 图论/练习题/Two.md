@@ -42,12 +42,18 @@ Write to the output the minimal amount of fuel needed to clean all streets.
 using namespace std;
 
 const int MAX = 1e5+5;
+int dis[MAX];
 int head[MAX];
-struct Edgege {
+int tot = 0;
+struct Edge {
     int to, w, next;
 } edge[MAX<<1];
-int dis[MAX];
-int tot = 0;
+
+void init() {
+    tot = 0;
+    memset(dis, 0, sizeof(dis));
+    memset(head, -1, sizeof(head));
+}
 
 void add(int u, int v, int w) {
     edge[tot].to = v;
@@ -56,10 +62,10 @@ void add(int u, int v, int w) {
     head[u] = tot++;
 }
 
-void dfs(int u, int parent) {
-    for (int i = head[u]; -1 != i; i = edge[i].next) {
+void dfs(int u, int p) {
+    for (int i = head[u]; ~i; i = edge[i].next) {
         int v = edge[i].to;
-        if (v == parent) {
+        if (v == p) {
             continue;
         }
         dis[v] = dis[u] + edge[i].w;
@@ -68,34 +74,33 @@ void dfs(int u, int parent) {
 }
 
 int main() {
-    int n, s;
-    while (~scanf("%d %d", &n, &s)) {
-        int a, b, c;
-        int total = 0;
-        memset(head, -1, sizeof(head));
-        for (int i = 1; i < n; i++) {
-            scanf("%d %d %d", &a, &b, &c);
-            add(a, b, c);
-            add(b, a, c);
-            total += c;
+    int x, y;
+    while (~scanf("%d %d", &x, &y)) {
+        init();
+        int u, v, w;
+        int len = 0;
+        for (int i = 1; i < x; i++) {
+            scanf("%d %d %d", &u, &v, &w);
+            add(u, v, w);
+            add(v, u, w);
+            len += w;
         }
-
-        dfs(s, -1);
-        int tmp = 0, v = 0;
-        for (int i = 1; i <= n; i++) {
+        dfs(y, -1);
+        int tmp = 0, node = 0;
+        for (int i = 1; i<= x; i++) {
             if (dis[i] > tmp) {
                 tmp = dis[i];
-                v = i;
+                node = i;
             }
         }
-
         memset(dis, 0, sizeof(dis));
-        dfs(v, -1);
+        
+        dfs(node, -1);
         int res = 0;
-        for (int i = 1; i <= n; i++) {
+        for (int i = 1; i <= x; i++) {
             res = max(res, dis[i]);
         }
-        printf("%d\n", total*2-res);
+        printf("%d\n", 2*len-res);
     }
     return 0;
 }

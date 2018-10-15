@@ -38,13 +38,15 @@ You are to output a single integer: the road distance between the two most remot
 
 using namespace std;
 
-const int MAX =1e4+5;
+const int MAX = 10005;
+
 int head[MAX];
 struct Edge {
-    int w, to, next;
+    int to, next, w;
 } edge[MAX<<1];
-int tot = 0;
+
 int dis[MAX];
+int tot = 0;
 
 void add(int u, int v, int w) {
     edge[tot].to = v;
@@ -53,10 +55,10 @@ void add(int u, int v, int w) {
     head[u] = tot++;
 }
 
-void dfs (int u, int parent) {
+void dfs(int u, int p) {
     for (int i = head[u]; -1 != i; i = edge[i].next) {
         int v = edge[i].to;
-        if (v == parent) {
+        if (v == p) {
             continue;
         }
         dis[v] = dis[u] + edge[i].w;
@@ -65,30 +67,33 @@ void dfs (int u, int parent) {
 }
 
 int main() {
-    int x, y, z;
+    int x = 0, y = 0, z = 0, len = 0;
     memset(head, -1, sizeof(head));
     while (~scanf("%d %d %d", &x, &y, &z)) {
         add(x, y, z);
         add(y, x, z);
+        len = max(x, y);
     }
     if (0 == x) {
         printf("0\n");
         return 0;
     }
+
     dfs(1, -1);
-    int tmp = 0, v= 0;
-    for (int i = 1; i <= MAX; i++) {
+    int tmp = 0, node = 0;
+    for (int i = 1; i <= len; i++) {
         if (dis[i] > tmp) {
-            v = i;
             tmp = dis[i];
+            node = i;
         }
     }
-
     memset(dis, 0, sizeof(dis));
-    dfs(v, -1);
+    dfs(node, -1);
     int res = 0;
-    for (int i = 1; i <= MAX; i++) {
-        res = max(res, dis[i]);
+    for (int i = 1; i <= len; i++) {
+        if (dis[i] > res) {
+            res = dis[i];
+        }
     }
     printf("%d\n", res);
     return 0;
