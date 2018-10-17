@@ -35,6 +35,7 @@ public class Main {
 }
 ```
 
+##### GO 语言版本
 ```go
 package main
 
