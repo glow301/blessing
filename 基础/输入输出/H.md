@@ -43,3 +43,24 @@ public class Main {
     }
 }
 ```
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    var size, num, sum, count int
+    fmt.Scanf("%d\n", &size)
+    for i := 0; i < size; i++ {
+        sum = 0
+        fmt.Scanf("%d", &count)
+        for j := 0; j < count; j++ {
+            fmt.Scanf("%d", &num)
+            sum += num
+        }
+        fmt.Scanf("\n")
+        fmt.Printf("%d\n\n", sum)
+    }
+}
+```

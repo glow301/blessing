@@ -34,3 +34,20 @@ public class Main {
     }
 }
 ```
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    var a, b int
+    for {
+        _, err := fmt.Scanf("%d %d\n",&a, &b)
+        if err != nil {
+            break
+        }
+        fmt.Printf("%d\n\n", a+b)
+    }
+}
+```

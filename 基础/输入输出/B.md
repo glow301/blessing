@@ -33,3 +33,18 @@ public class Main {
     }
 }
 ```
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    var size, a, b int
+    fmt.Scanf("%d\n", &size)
+    for i := 0; i < size; i++ {
+        fmt.Scanf("%d %d\n", &a, &b)
+        fmt.Println(a+b)
+    }
+}
+```

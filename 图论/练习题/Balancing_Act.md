@@ -94,7 +94,7 @@ int main() {
             scanf("%d %d", &a, &b);
             add(a, b, 1);
             add(b, a, 1);
-        }        
+        }
         
         dfs(1, -1);
         int tmp = n, node = 1;
