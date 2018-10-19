@@ -30,6 +30,8 @@ Print the numbers of all persons that are suspected to be Godfather. The numbers
 2 3
 
 ### 问题分析
+* 基本思路是求树的重心，并按顺序输出重心节点的编号（一棵树只可能有 1 个或 两个重心）。
+* 通过一遍 dfs 求出树的重心，在 balance 数组中求出 balance[i] 最小的即可。
 
 ### Code
 ```cpp
@@ -104,5 +106,93 @@ int main() {
         printf("\n");
     }
     return 0;
+}
+```
+
+##### Go 语言版本
+```go
+package main
+
+import "fmt"
+
+const MAX = 5e4+5
+
+type Edge struct {
+    to, w, next int
+}
+
+var (
+    head [MAX]int
+    tot  int
+    n int
+    size [MAX]int
+    balance [MAX]int
+    edge [MAX<<1]Edge
+)
+
+func memset(arr []int, v int) {
+    for key := range arr {
+        arr[key] = v
+    }
+}
+
+func max(a, b int) int {
+    if a > b {
+        return a
+    }
+    return b
+}
+
+func add(u, v, w int) {
+    edge[tot].to = v
+    edge[tot].w  = w
+    edge[tot].next = head[u]
+    head[u] = tot
+    tot++
+}
+
+func dfs(u, p int) {
+    size[u] = 1
+    for i := head[u]; -1 != i; i = edge[i].next {
+        v := edge[i].to
+        if v == p {
+            continue
+        }
+        dfs(v, u)
+        size[u] += size[v]
+        balance[u] = max(balance[u], size[v])
+    }
+    balance[u] = max(balance[u], n - size[u])
+}
+
+func main() {
+    for {
+        if _, err := fmt.Scanf("%d\n", &n); nil != err {
+            break
+        }
+        memset(head[:], -1)
+        memset(balance[:], 0)
+        var u, v int
+        for i := 1; i < n; i++ {
+            fmt.Scanf("%d %d\n", &u, &v)
+            add(u, v, 1)
+            add(v, u, 1)
+        }
+
+        dfs(1, -1)
+        tmp := n
+        for i := 1; i <= n; i++ {
+            if balance[i] < tmp {
+                tmp = balance[i]
+            }
+        }
+
+        for i := 1; i <= n; i++ {
+            if balance[i] == tmp {
+                fmt.Printf("%d ", i)
+            }
+        }
+        fmt.Println()
+    }
 }
 ```

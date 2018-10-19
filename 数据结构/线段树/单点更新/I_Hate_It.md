@@ -203,3 +203,97 @@ int main() {
     return 0;
 }
 ```
+
+##### Go 语言版本
+```go
+package main
+
+import "fmt"
+
+const MAX = 2e5+5
+
+type Tree struct {
+    sum int
+}
+
+var (
+    tree [MAX<<2]Tree
+    input [MAX]int
+)
+
+func max(a, b int) int {
+    if a > b {
+        return a
+    }
+    return b
+}
+
+func pushUp(root int) {
+    tree[root].sum = max(tree[root<<1].sum, tree[root<<1|1].sum)
+}
+
+func build(left, right, root int) {
+    if left == right {
+        tree[root].sum = input[left]
+        return
+    }
+    mid := (left + right) >> 1
+    build(left, mid, root<<1)
+    build(mid+1, right, root<<1|1)
+    pushUp(root)
+}
+
+func update(l, c, left, right, root int) {
+    if left == right {
+        tree[root].sum = c
+        return;
+    }
+    mid := (left + right) >> 1
+    if l <= mid {
+        update(l, c, left, mid, root<<1)
+    } else {
+        update(l, c, mid+1, right, root<<1|1)
+    }
+    pushUp(root)
+}
+
+func query(ql, qr, left, right, root int) int {
+    if ql <= left && qr >= right {
+        return tree[root].sum
+    }
+    mid := (left + right) >> 1
+    l, r := 0, 0
+    if ql <= mid {
+        l = query(ql, qr, left, mid, root<<1)
+    }
+    if qr > mid {
+        r = query(ql, qr, mid+1, right, root<<1|1)
+    }
+    return max(l, r)
+}
+
+func main() {
+    var n, m int
+    for {
+        if _, err := fmt.Scanf("%d %d", &n, &m); nil != err {
+            break
+        }
+        var num int
+        for i := 1; i <= n; i++ {
+            fmt.Scanf("%d", &num)
+            input[i] = num
+        }
+        build(1, n, 1)
+
+        op, x, y := "", 0, 0
+        for i := 0; i < m; i++ {
+            fmt.Scanf("%s %d %d", &op, &x, &y)
+            if "Q" == op {
+                fmt.Println(query(x, y, 1, n, 1))
+            } else {
+              update(x, y, 1, n, 1)
+            }
+        }
+    }
+}
+```
