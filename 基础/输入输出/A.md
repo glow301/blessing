@@ -43,8 +43,7 @@ import "fmt"
 func main() {
     var a, b int
     for {
-        _, err := fmt.Scanf("%d %d\n", &a, &b)
-        if err != nil {
+        if _, err := fmt.Scanf("%d %d\n", &a, &b); nil != err {
             break
         }
         fmt.Println(a+b)

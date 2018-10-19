@@ -105,3 +105,83 @@ int main() {
     return 0;
 }
 ```
+
+##### Go 语言版本
+```go
+package main
+
+import "fmt"
+
+const MAX = 1e5+5
+
+type Edge struct {
+    to, w, next int
+}
+
+var (
+    tot int
+    head [MAX]int
+    edge [MAX<<1]Edge
+    dis  [MAX]int
+)
+
+func memset(arr []int, v int) {
+    for i := range arr {
+        arr[i] = v
+    }
+}
+
+func add(u, v, w int) {
+    edge[tot].to = v
+    edge[tot].w  = w
+    edge[tot].next = head[u]
+    head[u] = tot
+    tot++
+}
+
+func dfs(u, p int) {
+    for i := head[u]; i != -1; i = edge[i].next {
+        v := edge[i].to
+        if v == p {
+            continue
+        }
+        dis[v] = dis[u] + edge[i].w
+        dfs(v, u)
+    }
+}
+
+func main() {
+    var n, start, u, v, w int
+    for {
+        if _, err := fmt.Scanf("%d %d\n", &n, &start); nil != err {
+            break
+        }
+        memset(head[:], -1)
+        total := 0
+        for i := 1; i < n; i++ {
+            fmt.Scanf("%d %d %d\n", &u, &v, &w)
+            add(u, v, w)
+            add(v, u, w)
+            total += w
+        }
+        dfs(start, -1)
+        var tmp, node int
+        for i := 1; i <= n; i++ {
+            if dis[i] > tmp {
+                tmp = dis[i]
+                node = i
+            }
+        }
+
+        memset(dis[:], 0)
+        dfs(node, -1)
+        var d int
+        for i := 1; i <= n; i++ {
+            if dis[i] > d {
+                d = dis[i]
+            }
+        }
+        println(2*total-d)
+    }
+}
+```

@@ -21,6 +21,11 @@ For each case output N lines. i-th line must contain number Si for i-th computer
 1 1  
 
 ### Sample Output
+3  
+2  
+3  
+4  
+4  
 
 ### 问题分析
 * 这道题需要先知道两个概念
@@ -137,5 +142,124 @@ int main() {
         }
     }
     return 0;
+}
+```
+
+##### Go 语言版本
+```go
+package main
+
+import "fmt"
+
+const MAX = 1e4+5
+
+type Edge struct {
+    to, w, next int
+}
+
+var (
+    head [MAX]int
+    dis  [MAX]int
+    dis1 [MAX]int
+    dis2 [MAX]int
+    edge [MAX<<1]Edge
+    tot  int
+)
+
+func memset(arr []int, v int) {
+    for key := range arr {
+        arr[key] = v
+    }
+}
+
+func max(a, b int) int {
+    if a > b {
+        return a
+    }
+    return b
+}
+
+func add(u, v, w int) {
+    edge[tot].to = v
+    edge[tot].w  = w
+    edge[tot].next = head[u]
+    head[u] = tot
+    tot++
+}
+
+func dfs(u, p int) {
+    for i := head[u]; i != -1; i = edge[i].next {
+        v := edge[i].to
+        if v ==p {
+            continue
+        }
+        dis[v] = dis[u] + edge[i].w
+        dfs(v, u)
+    }
+}
+
+func dfs1(u, p int) {
+    for i := head[u]; i != -1; i = edge[i].next {
+        v := edge[i].to
+        if v ==p {
+            continue
+        }
+        dis1[v] = dis1[u] + edge[i].w
+        dfs1(v, u)
+    }
+}
+
+func dfs2(u, p int) {
+    for i := head[u]; i != -1; i = edge[i].next {
+        v := edge[i].to
+        if v ==p {
+            continue
+        }
+        dis2[v] = dis2[u] + edge[i].w
+        dfs2(v, u)
+    }
+}
+
+func main() {
+    var n int
+    for {
+        if _, err := fmt.Scanf("%d\n", &n); err != nil {
+            break
+        }
+        memset(head[:], -1)
+        memset(dis[:], 0)
+        memset(dis1[:], 0)
+        memset(dis2[:], 0)
+        var v, w int
+        for u := 2; u <= n; u++ {
+            fmt.Scanf("%d %d\n", &v, &w)
+            add(u, v, w)
+            add(v, u, w)
+        }
+
+        dfs(1, -1)
+        var node, tmp int
+        for i := 1; i <= n; i++ {
+            if dis[i] > tmp {
+                tmp = dis[i]
+                node = i
+            }
+        }
+
+        dfs1(node, -1)
+        node, tmp = 0, 0
+        for i := 1; i <= n; i++ {
+            if dis1[i] > tmp {
+                tmp = dis[i]
+                node = i
+            }
+        }
+
+        dfs2(node, -1)
+
+        for i := 1; i <= n; i++ {
+            fmt.Println(max(dis1[i], dis2[i]))
+        }
+    }
 }
 ```
