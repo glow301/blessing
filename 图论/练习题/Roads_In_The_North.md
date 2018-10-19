@@ -99,3 +99,86 @@ int main() {
     return 0;
 }
 ```
+
+##### Go 语言版本
+```go
+package main
+
+import "fmt"
+
+const MAX = 1e4+5
+
+type Edge struct {
+    to, w, next int
+}
+
+var (
+    edge [MAX<<1]Edge
+    head [MAX]int
+    dis [MAX]int
+    tot int
+)
+
+func initial() {
+    for key, _ := range head {
+        head[key] = -1
+    }
+}
+
+func main() {
+    initial()
+    var u, v, w int
+    for {
+        _, err := fmt.Scanf("%d %d %d\n", &u, &v, &w)
+        if err != nil {
+            break
+        }
+        add(u, v, w)
+        add(v, u, w)
+    }
+    if u == 0 {
+        println(0)
+        return
+    }
+
+    dfs(1, -1)
+    var tmp, node int
+    for i:= 1; i < MAX; i++ {
+        if dis[i] > tmp {
+            tmp = dis[i]
+            node = i
+        }
+    }
+
+    for key, _ := range dis {
+        dis[key] = 0
+    }
+    var res int
+    dfs(node, -1)
+    for i := 1; i < MAX; i++ {
+        if dis[i] > res {
+            res = dis[i]
+        }
+    }
+    fmt.Println(res)
+}
+
+func add(u, v, w int) {
+    edge[tot].w = w
+    edge[tot].to = v
+    edge[tot].next = head[u]
+    head[u] = tot
+    tot++
+}
+
+func dfs(u, p int) {
+    for i:= head[u]; -1 != i; i = edge[i].next {
+        v := edge[i].to
+        if p == v {
+            continue
+        }
+        dis[v] = dis[u] + edge[i].w
+        dfs(v, u)
+    }
+}
+```
