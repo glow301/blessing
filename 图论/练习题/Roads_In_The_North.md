@@ -113,72 +113,67 @@ type Edge struct {
 }
 
 var (
-    edge [MAX<<1]Edge
     head [MAX]int
-    dis [MAX]int
+    dis  [MAX]int
+    edge [MAX<<1]Edge
     tot int
 )
 
-func initial() {
-    for key, _ := range head {
-        head[key] = -1
-    }
-}
-
-func main() {
-    initial()
-    var u, v, w int
-    for {
-        _, err := fmt.Scanf("%d %d %d\n", &u, &v, &w)
-        if err != nil {
-            break
-        }
-        add(u, v, w)
-        add(v, u, w)
-    }
-    if u == 0 {
-        println(0)
-        return
-    }
-
-    dfs(1, -1)
-    var tmp, node int
-    for i:= 1; i < MAX; i++ {
-        if dis[i] > tmp {
-            tmp = dis[i]
-            node = i
-        }
-    }
-
-    for key, _ := range dis {
-        dis[key] = 0
-    }
-    var res int
-    dfs(node, -1)
-    for i := 1; i < MAX; i++ {
-        if dis[i] > res {
-            res = dis[i]
-        }
-    }
-    fmt.Println(res)
-}
-
-func add(u, v, w int) {
-    edge[tot].w = w
+func add(u, v, w int){
     edge[tot].to = v
+    edge[tot].w  = w
     edge[tot].next = head[u]
     head[u] = tot
     tot++
 }
 
 func dfs(u, p int) {
-    for i:= head[u]; -1 != i; i = edge[i].next {
+    for i := head[u]; -1 != i; i = edge[i].next {
         v := edge[i].to
-        if p == v {
+        if v == p {
             continue
         }
         dis[v] = dis[u] + edge[i].w
         dfs(v, u)
     }
+}
+
+func main() {
+    var u, v, w int
+    for i := 0; i < MAX; i++ {
+        head[i] = -1
+    }
+    for {
+        if _, err := fmt.Scanf("%d %d %d\n", &u, &v, &w); nil != err {
+            break
+        }
+        add(u, v, w)
+        add(v, u, w)
+    }
+    if 0 == u {
+        println(0)
+        return
+    }
+
+    dfs(1, -1)
+    var tmp, node int
+    for i := 1; i < MAX; i++ {
+        if dis[i] > tmp {
+            tmp = dis[i]
+            node = i
+        }
+    }
+
+    for i := 1; i < MAX; i++ {
+        dis[i] = 0
+    }
+    dfs(node, -1)
+    var res int
+    for i := 1; i < MAX; i++ {
+        if dis[i] > res {
+            res = dis[i]
+         }
+    }
+    println(res)
 }
 ```
