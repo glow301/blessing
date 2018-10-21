@@ -2,8 +2,8 @@
 
 ### 冒泡排序
 > 冒泡排序是一种简单的排序算法，通过交换两个**相邻**元素的位置来进行排序
-* 时间复杂度 $O(n^2)$
-* 空间复杂度 $O(n)$
+* 时间复杂度 ![](http://latex.codecogs.com/gif.latex?O%28n%5E2%29)
+* 空间复杂度 ![](http://latex.codecogs.com/gif.latex?O%28n%29)
 
 ##### C++
 ```cpp
@@ -33,8 +33,8 @@ func bubbleSort(arr []int) {
 
 ### 选择排序
 > 选择排序的思想是，在未排序的数组中，找到 最大/最小 的元素，放到数组起始位置，再从剩下的元素中，找到 最大/最小 的元素，以此类推。
-* 时间复杂度 $O(n^2)$
-* 空间复杂度 $O(n)$
+* 时间复杂度 ![](http://latex.codecogs.com/gif.latex?O%28n%5E2%29)
+* 空间复杂度 ![](http://latex.codecogs.com/gif.latex?O%28n%29)
 
 ##### C++
 ```cpp
@@ -73,8 +73,8 @@ func selectSort(arr []int) {
 
 ### 直接插入排序
 > 直接插入排序的思想是，对数组从前往后扫描，构建有序序列，如果当前元素小于**已排序**序列中的最后元素，那么从已排序序列中从后向前扫描，找到合适的位置插入。
-* 时间复杂度 $O(n^2)$
-* 空间复杂度 $O(n)$
+* 时间复杂度 ![](http://latex.codecogs.com/gif.latex?O%28n%5E2%29)
+* 空间复杂度 ![](http://latex.codecogs.com/gif.latex?O%28n%29)
 
 ##### C++
 ```cpp
