@@ -134,16 +134,16 @@ int main() {
         scanf("%d", &num);
         int x, y;
         for (int i = 1; i < num; i++) {
-            scanf("%d %d", &x, &y);               
+            scanf("%d %d", &x, &y);
             vis[y] = 1;
             add(x, y, 1);
             add(y, x, 1);
         }
-        
+
         int root = 0;
         for (int i = 1; i <= num; i++) {
             if (!vis[i]) {
-                root = i; 
+                root = i;
             }
         }
         dfs1(root, -1, 1);
