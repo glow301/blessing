@@ -2,8 +2,8 @@
 
 ### 冒泡排序
 > 冒泡排序是一种简单的排序算法，通过交换两个**相邻**元素的位置来进行排序
-* 时间复杂度 ![](http://latex.codecogs.com/gif.latex?O%28n%5E2%29)
-* 空间复杂度 ![](http://latex.codecogs.com/gif.latex?O%28n%29)
+* 时间复杂度 $O(n^2)$
+* 空间复杂度 $O(n)$
 
 ##### C++
 ```cpp
@@ -33,8 +33,8 @@ func bubbleSort(arr []int) {
 
 ### 选择排序
 > 选择排序的思想是，在未排序的数组中，找到 最大/最小 的元素，放到数组起始位置，再从剩下的元素中，找到 最大/最小 的元素，以此类推。
-* 时间复杂度 ![](http://latex.codecogs.com/gif.latex?O%28n%5E2%29)
-* 空间复杂度 ![](http://latex.codecogs.com/gif.latex?O%28n%29)
+* 时间复杂度 $O(n^2)$
+* 空间复杂度 $O(n)$
 
 ##### C++
 ```cpp
@@ -73,8 +73,8 @@ func selectSort(arr []int) {
 
 ### 直接插入排序
 > 直接插入排序的思想是，对数组从前往后扫描，构建有序序列，如果当前元素小于**已排序**序列中的最后元素，那么从已排序序列中从后向前扫描，找到合适的位置插入。
-* 时间复杂度 ![](http://latex.codecogs.com/gif.latex?O%28n%5E2%29)
-* 空间复杂度 ![](http://latex.codecogs.com/gif.latex?O%28n%29)
+* 时间复杂度 $O(n^2)$
+* 空间复杂度 $O(n)$
 
 ##### C++
 ```cpp
@@ -108,4 +108,53 @@ func insertSort(arr []int) {
 ```
 
 ### 快速排序
-> 
+> 快速排序是面试中常见的一个排序算法，基本思想是使用分治的思想，使用一个元素（通常是数组第一个元素）作为标志 记为`key`，对数组进行一次划分，`key`左侧的元素都小于`key`，`key`右侧的元素都大于 `key`，然后对左右两个数组再进行调用。
+* 时间复杂度 $O(log n)$
+* 空间复杂度 $O(n)$
+
+##### C++
+```cpp
+void quickSort(int array[], int left, int right) {
+    if (left >= right) {
+        return;
+    }
+    int low = left, high = right;
+    int mid = array[left];
+    while (low < high) {
+        while (array[high] >= mid && low < high) {
+            high--;
+        }
+        array[low] = array[high];
+        while (array[low] < mid && low < high) {
+            low++;
+        }
+        array[high] = array[low];
+    }
+    array[low] = mid;
+    quickSort(array, left, low-1);
+    quickSort(array, low+1, right);
+}
+```
+
+##### GO
+```go
+func quickSort(arr []int) {
+    if len(arr) <= 1 {
+        return
+    }
+    mid := arr[0]
+    low, high := 0, len(arr)-1
+    for i := 1; i <= high; {
+        if arr[i] > mid {
+            arr[i], arr[high] = arr[high], arr[i]
+            high--
+        } else {
+            arr[i], arr[low] = arr[low], arr[i]
+            low++
+            i++
+        }
+    }
+    quickSort(arr[:low])
+    quickSort(arr[low+1:])
+}
+```
