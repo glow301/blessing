@@ -112,6 +112,8 @@ func insertSort(arr []int) {
 * 时间复杂度 $O(log N)$
 * 空间复杂度 $O(n)$
 
+todo 为什么快排的时间复杂度是 $O(nlog N)$
+
 ##### C++
 ```cpp
 void quickSort(int array[], int left, int right) {
@@ -163,6 +165,8 @@ func quickSort(arr []int) {
 > 堆排序是利用堆这种数据结构所设计的一种排序算法，主要涉及到建堆，调整堆的操作（以大顶堆为例）
 * 时间复杂度 $O(log N)$
 * 空间复杂度 $O(1)$
+
+todo 关于堆的简介
 
 ##### C++
 ```cpp
