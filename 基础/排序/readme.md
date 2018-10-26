@@ -116,25 +116,24 @@ todo 为什么快排的时间复杂度是 $O(nlog N)$
 
 ##### C++
 ```cpp
-void quickSort(int array[], int left, int right) {
-    if (left >= right) {
+void quickSort(int arr[], int low, int high) {
+    if (low >= high) {
         return;
     }
-    int low = left, high = right;
-    int mid = array[left];
+    int key = arr[low];
     while (low < high) {
-        while (array[high] >= mid && low < high) {
+        while (low < high && arr[high] >= key) {
             high--;
         }
-        array[low] = array[high];
-        while (array[low] < mid && low < high) {
+        arr[low] = arr[high];
+        while (low < high && arr[low] < key) {
             low++;
         }
-        array[high] = array[low];
+        arr[high] = arr[low];
     }
-    array[low] = mid;
-    quickSort(array, left, low-1);
-    quickSort(array, low+1, right);
+    arr[low] = key;
+    quickSort(arr, 0, low-1);
+    quickSort(arr, low+1, high);
 }
 ```
 
