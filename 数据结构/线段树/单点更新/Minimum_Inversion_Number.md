@@ -83,6 +83,7 @@ For each case, output the minimum inversion number on a single line.
 
 
 ### Code
+#### C++ 版
 ```cpp
 #include<cstdio>
 #include<cstring>
@@ -162,5 +163,92 @@ int main() {
         printf("%d\n", ans);
     }
     return 0;
+}
+```
+
+#### GO 版
+```go
+package main
+
+import "fmt"
+
+const MAX = 5000+5
+
+type Tree struct {
+    sum int
+}
+
+var (
+    tree [MAX<<2]Tree
+    input [MAX]int
+)
+
+func pushUp(root int) {
+    tree[root].sum = tree[root*2].sum + tree[root*2+1].sum
+}
+
+func build(left, right, root int) {
+    if left == right {
+        tree[root].sum = 0
+        return
+    }
+    mid := (left + right) >> 1
+    build(left, mid, root*2)
+    build(mid+1, right, root*2+1)
+    pushUp(root)
+}
+
+func update(l, c, left, right, root int) {
+    if left == right {
+        tree[root].sum = 1
+        return
+    }
+    mid := (left + right) >> 1
+    if l <= mid {
+        update(l, c, left, mid, root*2)
+    } else {
+        update(l, c, mid+1, right, root*2+1)
+    }
+    pushUp(root)
+}
+
+func query(ql, qr, left, right, root int) int {
+    if ql <= left && qr >= right {
+        return tree[root].sum
+    }
+    mid := (left + right) >> 1
+    res := 0
+    if ql <= mid {
+        res += query(ql, qr, left, mid, root*2)
+    }
+    if qr > mid {
+        res += query(ql, qr, mid+1, right, root*2+1)
+    }
+    return res
+}
+
+func main() {
+    var num int
+    for {
+        if _, err := fmt.Scanf("%d\n", &num); err != nil {
+            break
+        }
+        build(1, num, 1)
+        sum := 0
+        for i := 1; i <= num; i++ {
+            fmt.Scanf("%d", &input[i])
+            sum += query(input[i], num, 1, num, 1)
+            update(input[i], 1, 1, num, 1)
+        }
+
+        res := sum
+        for i := 1; i <= num; i++ {
+            sum = sum + num - input[i] - input[i] - 1
+            if sum < res {
+                res = sum
+            }
+        }
+        fmt.Println(res)
+    }
 }
 ```
