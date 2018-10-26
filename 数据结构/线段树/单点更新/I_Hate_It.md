@@ -39,6 +39,7 @@ Q 1 5
 其他直接套用线段树模板即可。
 
 ### Code
+#### java 版
 ```java
 import java.util.Scanner;
 
@@ -121,7 +122,7 @@ public class Main {
 }
 ```
 
-### c++ 版
+#### c++ 版
 ```cpp
 #include<cstdio>
 #include<cstring>
@@ -204,7 +205,7 @@ int main() {
 }
 ```
 
-##### Go 语言版本
+#### Go 语言版本
 ```go
 package main
 
