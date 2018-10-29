@@ -109,7 +109,7 @@ func insertSort(arr []int) {
 
 ### 快速排序
 > 快速排序是面试中常见的一个排序算法，基本思想是使用分治的思想，使用一个元素（通常是数组第一个元素）作为标志 记为`key`，对数组进行一次划分，`key`左侧的元素都小于`key`，`key`右侧的元素都大于 `key`，然后对左右两个数组再进行调用。
-* 时间复杂度 $O(log N)$
+* 时间复杂度 $O(nlog N)$
 * 空间复杂度 $O(n)$
 
 todo 为什么快排的时间复杂度是 $O(nlog N)$
@@ -162,7 +162,7 @@ func quickSort(arr []int) {
 
 ### 堆排序
 > 堆排序是利用堆这种数据结构所设计的一种排序算法，主要涉及到建堆，调整堆的操作（以大顶堆为例）
-* 时间复杂度 $O(log N)$
+* 时间复杂度 $O(nlog N)$
 * 空间复杂度 $O(1)$
 
 todo 关于堆的简介
@@ -225,5 +225,82 @@ func heapSort(arr []int) {
         arr[0], arr[i] = arr[i], arr[0]
         maxHeapify(arr, 0, i-1)
     }
+}
+```
+
+### 归并排序
+> 归并排序采用分治的思想，通过合并有序的子序列来得到有序序列。归并排序是一种稳定的排序算法。
+* 时间复杂度: $O(nlog N)$
+* 空间复杂度: $O(n)$
+* 实现步骤
+    1. 将序列分成两部分。
+    1. 对左右两边分别采用分治的方法得到有序序列。
+    1. 将左右两个序列合并成一个有序的序列。
+
+##### C++
+```cpp
+void mergeAdd(int arr[], int left, int mid, int right) {
+    if (left >= right) {
+        return;
+    }
+    int i = left, j = mid + 1, k = 0;
+    int tmp[right-left+1];
+    while (i <= mid && j <= right) {
+        if (arr[i] <= arr[j]) {
+            tmp[k++] = arr[i++];
+        } else {
+            tmp[k++] = arr[j++];
+        }
+    }
+    while (i <= mid) {
+        tmp[k++] = arr[i++];
+    }
+    while (j <= right) {
+        tmp[k++] = arr[j++];
+    }
+    for (int i = 0; i < k; i++) {
+        arr[left + i] = tmp[i];
+    }
+}
+
+void mergeSort(int arr[], int left, int right) {
+    if (left >= right) {
+        return;
+    }
+    int mid = (left + right) >> 1;
+    mergeSort(arr, 0, mid);
+    mergeSort(arr, mid+1, right);
+    mergeAdd(arr, 0, mid, right);
+}
+```
+
+##### GO
+```go
+func merge(left, right []int) []int {
+    tmp := make([]int, 0)
+    i, j := 0, 0
+    for i < len(left) && j < len(right) {
+        if left[i] < right[j] {
+            tmp = append(tmp, left[i])
+            i++
+        } else {
+            tmp = append(tmp, right[j])
+            j++
+        }
+    }
+    tmp = append(tmp, left[i:]...)
+    tmp = append(tmp, right[j:]...)
+    return tmp
+}
+
+func mergeSort(arr []int) []int {
+    n := len(arr)
+    if n < 2 {
+        return arr
+    }
+    mid := n / 2
+    left := mergeSort(arr[:mid])
+    right := mergeSort(arr[mid:])
+    return merge(left, right)
 }
 ```
