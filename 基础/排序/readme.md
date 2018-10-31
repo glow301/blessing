@@ -136,6 +136,27 @@ void quickSort(int arr[], int low, int high) {
     quickSort(arr, low+1, high);
 }
 ```
+* 另一个 C++ 版本
+```cpp
+void quickSort(int arr[], int low, int high) {
+    if (low >= high) {
+        return;
+    }
+    int mid = arr[low];
+    for (int i = 1; i <= high;) {
+        if (arr[i] >= mid) {
+            swap(arr[i], arr[high]);
+            high--;
+        } else {
+            swap(arr[i], arr[low]);
+            low++;
+            i++;
+        }
+    }
+    quickSort(arr, 0, low-1);
+    quickSort(arr, low+1, high);
+}
+```
 
 ##### GO
 ```go

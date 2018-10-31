@@ -175,3 +175,127 @@ int main() {
     return 0;
 }
 ```
+
+##### Go
+```go
+package main
+
+import "fmt"
+
+const MAXN = 1e5
+
+type Tree struct {
+    llcis, rlcis, lcis, left, right int
+}
+
+var (
+    tree [MAXN<<2]Tree
+    input [MAXN]int
+    T int
+)
+
+func max(a, b int) int {
+    if a > b {
+        return a
+    }
+    return b
+}
+
+func min(a, b int) int {
+    if a < b {
+        return a
+    }
+    return b
+}
+
+func pushUp(root, left, right int) {
+    tree[root].llcis = tree[root*2+1].llcis
+    tree[root].rlcis = tree[root*2+2].rlcis
+    tree[root].left  = tree[root*2+1].left
+    tree[root].right = tree[root*2+2].right
+    tree[root].lcis  = max(tree[root*2+1].lcis, tree[root*2+2].lcis)
+
+    if tree[root*2+1].right < tree[root*2+2].left {
+        mid := (left + right) >> 1
+        if tree[root].llcis == mid - left + 1 {
+            tree[root].llcis += tree[root*2+2].llcis
+        }
+        if tree[root].rlcis == right - mid {
+            tree[root].rlcis += tree[root*2+1].rlcis
+        }
+        tree[root].lcis = max(tree[root].lcis, tree[root*2+1].rlcis + tree[root*2+2].llcis)
+    }
+}
+
+func build(left, right, root int) {
+    if left == right {
+        tree[root].lcis, tree[root].llcis, tree[root].rlcis = 1, 1, 1
+        tree[root].left, tree[root].right = input[left], input[left]
+        return
+    }
+    mid := (left + right) >> 1
+    build(left, mid, root*2+1)
+    build(mid+1, right, root*2+2)
+    pushUp(root, left, right)
+}
+
+func update(l, c, left, right, root int) {
+    if left == right {
+        tree[root].left, tree[root].right = c, c
+        return
+    }
+    mid := (left + right) >> 1
+    if l <= mid {
+        update(l, c, left, mid, root*2+1)
+    } else {
+        update(l, c, mid+1, right, root*2+2)
+    }
+    pushUp(root, left, right)
+}
+
+func query(ql, qr, left, right, root int) int {
+    if ql <= left && qr >= right {
+        return tree[root].lcis
+    }
+    mid := (left + right) >> 1
+    l, r := 0, 0
+    if ql <= mid {
+        l = query(ql, qr, left, mid, root*2+1)
+    }
+    if qr > mid {
+        r = query(ql, qr, mid+1, right, root*2+2)
+    }
+    ans := max(l, r)
+    if tree[root*2+1].right < tree[root*2+2].left {
+        lrlcis := min(tree[root*2+1].rlcis, mid - ql + 1)
+        rllcis := min(tree[root*2+2].llcis, qr - mid)
+        ans = max(ans, lrlcis + rllcis)
+    }
+    return ans
+}
+
+func main() {
+    fmt.Scanf("%d\n", &T)
+    for i := 0; i < T; i++ {
+        var n, q int
+        fmt.Scanf("%d %d\n", &n, &q)
+        for j := 0; j < n; j++ {
+            fmt.Scanf("%d", &input[j])
+        }
+        fmt.Scanf("\n")
+        build(0, n, 0)
+
+        var op string
+        var num1, num2 int
+        for j := 0; j < q; j++ {
+            fmt.Scanf("%s %d %d\n", &op, &num1, &num2)
+            switch op {
+                case "Q":
+                    fmt.Println(query(num1, num2, 0, n, 0))
+                case "U":
+                    update(num1, num2, 0, n, 0)
+            }
+        }
+    }
+}
+```
