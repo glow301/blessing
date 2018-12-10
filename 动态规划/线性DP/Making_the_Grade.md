@@ -32,38 +32,3 @@ Please compute the minimum cost of grading his road so it becomes a continuous s
 ### 分析
 
 ### Code
-##### C++
-```cpp
-#include<cstdio>
-#include<cmath>
-#include<algorithm>
-#include<cstring>
-
-using namespace std;
-
-int main(){
-    int num;
-    while (~scanf("%d", &num)) {
-        int dp[num];
-        int arr[num];
-        memset(dp, 0, sizeof(dp));
-        memset(arr, 0, sizeof(arr));
-
-        for (int i = 0; i < num; i++) {
-            scanf("%d", &arr[i]);
-        } 
-
-        int positive = 0, negative = 0;
-        for (int i = 1; i < num; i++) {
-            int t = arr[i] - arr[i-1];
-            if (t > 0) {
-                positive += t;
-            } else {
-                negative += t;
-            }
-            dp[i] = min(positive, abs(negative));
-        }
-        printf("%d\n", dp[num-1]);
-    }
-}
-```
