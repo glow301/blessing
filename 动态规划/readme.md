@@ -213,13 +213,7 @@ func main() {
 用 dp[i][j] 表示**前 i 个物品刚好放入容量为 j 的背包**所得到的最大价值。
 
 ##### 状态转移方程
-$$ dp[i][j]= max \left\{
-\begin{aligned}
-& dp[i-1][j] & 不选最后一个物品 & \\
-& dp[i-1][j-C_i] + W_{i} & 选最后一个物品 & \\
-\end{aligned}
-\right.
-$$ 
+<img src="./image/knaspack.png">
 
 ##### 实现
 ```go
@@ -252,3 +246,4 @@ for i := 0; i < n; i++ {
     }
 }
 ```
+v
