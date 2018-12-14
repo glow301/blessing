@@ -36,28 +36,27 @@ Scenario #2:
 
 using namespace std;
 
-const int MAXN = 150010;
-int dp[MAXN];
+const int MAXN = 46;
+
+long long dp[MAXN];
+
+void init(){
+    dp[1] = 2;
+    dp[2] = 3;
+    for (int i = 3; i < MAXN; i++) {
+        dp[i] = dp[i-1] + dp[i-2];
+    }
+}
 
 int main(){
-    int n;
+    init();
+    int n = 0;
     scanf("%d", &n);
     for (int i = 1; i <= n; i++) {
-        scanf("%d", &dp[i]);
+        int num = 0;
+        scanf("%d", &num);
+        printf("Scenario #%d:\n%d\n\n", i, dp[num]);
     }
-    int flag = 0;
-    int sum = 0;
-    for (int i = 1; i <= n; i++) {
-        if (dp[i] >= dp[i-1] && dp[i] >= dp[i+1] && flag == 0) {
-            sum += dp[i];
-            flag = 1;
-        } else if (dp[i] <= dp[i-1] && dp[i] <= dp[i+1] && flag == 1) {
-            sum -= dp[i];
-            flag = 0;
-        }
-    }
-    printf("%d\n", sum);
-
     return 0;
 }
 ```
@@ -71,20 +70,16 @@ import "fmt"
 func main(){
     n := 0
     fmt.Scanf("%d\n", &n)
-    dp := make([]int, n+2)
-    for i := 1; i <= n; i++ {
-        fmt.Scanf("%d\n", &dp[i])
-    }
-    ans, flag := 0, 0
-    for i := 1; i <= n; i++ {
-        if dp[i] >= dp[i-1] && dp[i] >= dp[i+1] && 0 == flag {
-            ans += dp[i]
-            flag = 1
-        } else if dp[i] <= dp[i-1] && dp[i] <= dp[i+1] && 1 == flag {
-            ans -= dp[i]
-            flag = 0
+
+    for j := 1; j <= n; j++ {
+        num := 0;
+        fmt.Scanf("%d\n", &num)
+        dp := make([]int, num+1);
+        dp[0], dp[1] = 1, 2
+        for i := 2; i <= num; i++ {
+            dp[i] = dp[i-1] + dp[i-2]
         }
+        fmt.Printf("Scenario #%d:\n%d\n\n", j, dp[num])
     }
-    fmt.Println(ans)
 }
 ```
