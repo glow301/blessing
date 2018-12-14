@@ -213,7 +213,7 @@ func main() {
 用 dp[i][j] 表示**前 i 个物品刚好放入容量为 j 的背包**所得到的最大价值。
 
 ##### 状态转移方程
-<img src="./image/knaspack.png">
+<img src="./背包问题/image/knaspack.png">
 
 ##### 实现
 ```go
