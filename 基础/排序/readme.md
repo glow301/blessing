@@ -96,13 +96,13 @@ void insertSort(int array[], int left, int right) {
 func insertSort(arr []int) {
     length := len(arr)
     for i := 1; i < length; i++ {
-        tmp := arr[i]
-        j := i - 1
-        for j >= 0 && tmp < arr[j] {
-            arr[j+1] = arr[j]
-            j--
+        for j := i - 1; j >= 0; j-- {
+            if arr[j] > arr[j+1] {
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+            } else {
+                break
+            }
         }
-        arr[j+1] = tmp
     }
 }
 ```
