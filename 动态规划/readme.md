@@ -7,7 +7,8 @@
 * [无后效性](#无后效性)
 
 ### 常见问题
-* [最长公共子序列 LCS](#最长公共子序列)
+* [最长公共子序列 Longest Common Subsequence](#最长公共子序列)
+* [最长公共子串 Longest Common Substring](#最长公共子串)
 * [最长递增子序列](#最长递增子序列)
 * [背包问题](#背包问题)
 
@@ -121,6 +122,34 @@ func main() {
         }
         fmt.Println(dp[l1][l2])
     }
+}
+```
+
+### 最长公共子串
+> **最长公共子串**与**最长公共子序列**的区别在于，最长公共子串要求必须**连续**，而最长公共子序列不要求。
+
+* dp 方式并不是求解最长公共子串的最优方案，可以使用**广义后缀树**来得到 $O(n)$ 的算法。
+
+#### 代码
+```go
+func longestCommonSubstring(str1, str2 string) int {
+    l1, l2 := len(str1), len(str2)
+    dp := make([][]int, l1)
+    ans := 0
+    for i := 0; i < l1; i++ {
+        dp[i] = make([]int, l2)
+        for j := 0; j < l2; j++ {
+            if str1[i] == str2[j] {
+                if 0 == i || 0 == j {
+                    dp[i][j] = 1
+                } else {
+                    dp[i][j] = dp[i-1][j-1] + 1
+                }
+                ans = max(ans, dp[i][j])
+            }
+        }
+    }
+    return ans
 }
 ```
 
